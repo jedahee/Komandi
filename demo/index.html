@@ -3639,10 +3639,7 @@ async function iniciar() {
   actualizarBotonUsuario();
   if (!getUsuario()) abrirModalUsuario();
   if (EMBEDDED_DATA) {
-    /* En el archivo único (demo) no hay servidor: el selector de clientes y la
-       pestaña Cobros quedan desactivados. */
-    const sel = $('#selector-cliente');
-    if (sel) sel.classList.add('oculto');
+    /* En la demo el selector de clientes sí se muestra (input libre). */
   } else {
     cargarClientesLigeros();
     vaciarCola();
@@ -3968,10 +3965,11 @@ async function manejarComanda(id, accion) {
     }
     toast(ahoraHaciendo ? 'Comanda en marcha' : 'Comanda de vuelta a pendiente');
   } else if (accion === 'hecha') {
+    const usuario = getUsuario();
     if (hayServidor) {
-      try { await fetchApi('/api/comanda/' + encodeURIComponent(id) + '/hecha', { method: 'POST' }); } catch (e) { console.error('hecha:', e); }
+      try { await fetchApi('/api/comanda/' + encodeURIComponent(id) + '/hecha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cocinero: usuario || '' }) }); } catch (e) { console.error('hecha:', e); }
     } else {
-      const lista = cargarComandasLocal().map((c) => c.id === id ? Object.assign({}, c, { estado: 'hecha' }) : c);
+      const lista = cargarComandasLocal().map((c) => c.id === id ? Object.assign({}, c, { estado: 'hecha', cocinero: usuario || c.cocinero || '' }) : c);
       guardarComandasLocal(lista);
     }
     toast('Comanda marcada como hecha');

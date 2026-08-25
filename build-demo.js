@@ -67,6 +67,25 @@ js = js.replace(
   'async function abrirCobros() {\n  if (EMBEDDED_DATA) {\n    var todas = cargarComandasLocal();\n    var pendientes = todas.filter(function (c) { return c && !c.cobrado; });\n    cobrosDatos = { ok: true, comandas: pendientes, clientes: [], cobros: [] };\n    renderCobros();\n    return \'ok\';\n  }'
 );
 
+/* 3) Mostrar selector de clientes en demo: quitar el oculto del selector-cliente */
+js = js.replace(
+  'if (EMBEDDED_DATA) {\n' +
+  '    /* En el archivo único (demo) no hay servidor: el selector de clientes y la\n' +
+  '       pestaña Cobros quedan desactivados. */\n' +
+  '    const sel = $(\'#selector-cliente\');\n' +
+  '    if (sel) sel.classList.add(\'oculto\');\n' +
+  '  } else {\n' +
+  '    cargarClientesLigeros();\n' +
+  '    vaciarCola();\n' +
+  '  }',
+  'if (EMBEDDED_DATA) {\n' +
+  '    /* En la demo el selector de clientes sí se muestra (input libre). */\n' +
+  '  } else {\n' +
+  '    cargarClientesLigeros();\n' +
+  '    vaciarCola();\n' +
+  '  }'
+);
+
 const salida = html
   .replace(/<link rel="manifest"[^>]*>\n/g, '')
   .replace(/<link rel="icon"[^>]*>\n/g, '')
