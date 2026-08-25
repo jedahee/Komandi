@@ -3594,6 +3594,13 @@ async function pedirEstado() {
    se abre el modal del PIN. Devuelve el JSON del endpoint, o null si se
    canceló el modal o falló sin token. */
 async function accederConPinVerificacion(endpoint, titulo, sub, accion, datos) {
+  if (EMBEDDED_DATA) {
+    const cuerpo = { token: '', usuario: getUsuario() };
+    if (accion === 'enviar-email' && datos) cuerpo.email = datos;
+    else if (accion) cuerpo.accion = accion;
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
+    return await res.json().catch(() => ({}));
+  }
   const token = getVToken();
   const cuerpo = { token: token, usuario: getUsuario() };
   if (accion === 'enviar-email' && datos) cuerpo.email = datos;

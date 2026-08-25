@@ -478,6 +478,13 @@ js = js.replace(
   'function pedirPinVerificacion(endpoint, titulo, sub, accion, datos) {\n  if (EMBEDDED_DATA) return Promise.resolve(null);\n  return new Promise((resolve) => {'
 );
 
+/* 7) accederConPinVerificacion: en demo, hacer fetch directo sin pedir PIN.
+   El mock fetch resuelve todas las /api/* con localStorage. */
+js = js.replace(
+  /async function accederConPinVerificacion\(endpoint, titulo, sub, accion, datos\) \{\n  const token = getVToken\(\);/,
+  'async function accederConPinVerificacion(endpoint, titulo, sub, accion, datos) {\n  if (EMBEDDED_DATA) {\n    const cuerpo = { token: \'\', usuario: getUsuario() };\n    if (accion === \'enviar-email\' && datos) cuerpo.email = datos;\n    else if (accion) cuerpo.accion = accion;\n    const res = await fetch(endpoint, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: JSON.stringify(cuerpo) });\n    return await res.json().catch(() => ({}));\n  }\n  const token = getVToken();'
+);
+
 const salida = html
   .replace(/<link rel="manifest"[^>]*>\n/g, '')
   .replace(/<link rel="icon"[^>]*>\n/g, '')
