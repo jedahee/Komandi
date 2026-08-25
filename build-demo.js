@@ -468,6 +468,16 @@ js = js.replace(
   'async function abrirEstadisticas() {\n  let historial = null;\n  let cierres = null;\n  const estado = await pedirEstado();\n  if (estado) {\n    if (EMBEDDED_DATA || (estado.pin && paginaProtegidaUsuario(\'historial\'))) {\n      const d = await accederConPinVerificacion(\n        \'/api/historial\','
 );
 
+/* 6) Nunca pedir PIN en demo: pedirPin y pedirPinVerificacion resuelven null */
+js = js.replace(
+  /function pedirPin\(\) \{\n  return new Promise\(\(resolve\) => \{/,
+  'function pedirPin() {\n  if (EMBEDDED_DATA) return Promise.resolve(null);\n  return new Promise((resolve) => {'
+);
+js = js.replace(
+  /function pedirPinVerificacion\(endpoint, titulo, sub, accion, datos\) \{\n  return new Promise\(\(resolve\) => \{/,
+  'function pedirPinVerificacion(endpoint, titulo, sub, accion, datos) {\n  if (EMBEDDED_DATA) return Promise.resolve(null);\n  return new Promise((resolve) => {'
+);
+
 const salida = html
   .replace(/<link rel="manifest"[^>]*>\n/g, '')
   .replace(/<link rel="icon"[^>]*>\n/g, '')

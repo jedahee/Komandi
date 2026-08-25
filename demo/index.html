@@ -3472,6 +3472,7 @@ function actualizarLabelRecordar() {
   if (lab) lab.textContent = 'Recordar este dispositivo durante ';
 }
 function pedirPin() {
+  if (EMBEDDED_DATA) return Promise.resolve(null);
   return new Promise((resolve) => {
     esperandoPin = resolve;
     pinSolicitud = null;
@@ -3484,6 +3485,7 @@ function pedirPin() {
   });
 }
 function pedirPinVerificacion(endpoint, titulo, sub, accion, datos) {
+  if (EMBEDDED_DATA) return Promise.resolve(null);
   return new Promise((resolve) => {
     pinSolicitud = { endpoint: endpoint, resolver: resolve, accion: accion, datos: datos };
     $('#pin-titulo').textContent = titulo;
