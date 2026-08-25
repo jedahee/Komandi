@@ -478,6 +478,11 @@ details ul + p { padding-top: .3rem; }
 .incluye h3 { margin-bottom: 1rem; font-size: 1.1rem; text-align: center; }
 .incluye ul { list-style: none; display: grid; gap: .6rem; color: var(--texto2); }
 
+/* ---------- Features grid ---------- */
+.features-grid { gap: 1rem; }
+.feature-card { transition: transform .2s ease, box-shadow .2s ease; }
+.feature-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--sombra); }
+
 /* ---------- Contacto ---------- */
 .contacto .tarjeta-contacto { text-decoration: none; display: block; text-align: center; }
 .tarjeta-contacto:hover { background: var(--superficie2); }

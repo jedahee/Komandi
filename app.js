@@ -4,25 +4,17 @@
   /* ------------------------------------------------------------------
    * CONFIGURACIÓN — cámbialo todo aquí y se actualiza en toda la web
    *
-   * ⚠️ PLACEHOLDERS: WhatsApp, email y RRSS aún no existen (hay que crear
-   *    las cuentas reales). Cuando las tengas, sustituye los valores.
+   * Configuración de la landing: email, RRSS y datos de contacto.
    * ------------------------------------------------------------------ */
   var SITIO = {
     nombre: 'Komandi',
-    whatsapp: '+34 000 000 000', // ← número de ventas (visible)
-    whatsappId: '34000000000',   // ← mismo número, sin + ni espacios
-    email: 'hola@komandi.es',    // ← A CREAR: email de soporte/ventas
-    rrss: {                       // ← A CREAR: perfiles reales
-      instagram: 'https://www.instagram.com/',
-      tiktok: 'https://www.tiktok.com/',
-      facebook: 'https://www.facebook.com/'
+    email: 'komandiapp@gmail.com',
+    rrss: {
+      instagram: 'https://www.instagram.com/komandiapp'
     },
     horario: '10:00 a 20:00',    // ← horario de soporte y atención
     url: 'https://TUUSUARIO.github.io/kebapps/', // ← URL final de la landing (para el QR del folleto)
-    demo: 'demo/index.html',     // ← URL aparte de la DEMO GRATUITA. Apunta al archivo
-                                 //   concreto (index.html) para que funcione abriendo la
-                                 //   página directamente (file://) y en cualquier hosting
-                                 //   estático (GitHub Pages, Netlify, Cloudflare…).
+    demo: 'demo/index.html',     // ← Generado por build-demo.js: app completa en un solo archivo, SIN PIN
     mensaje: 'Hola, he probado la demo de Komandi y quiero montarla en mi negocio.',
     planes: {
       mensual: {
@@ -40,36 +32,24 @@
     }
   };
 
-  var wa = 'https://wa.me/' + SITIO.whatsappId + '?text=' + encodeURIComponent(SITIO.mensaje);
-
-  document.querySelectorAll('[data-wa]').forEach(function (a) {
-    a.href = wa;
-    a.target = '_blank';
-    a.rel = 'noopener';
+  document.querySelectorAll('[data-email], [data-wa]').forEach(function (a) {
+    a.href = 'mailto:' + SITIO.email +
+      '?subject=' + encodeURIComponent(SITIO.mensaje) +
+      '&body=' + encodeURIComponent(SITIO.mensaje);
   });
 
   document.querySelectorAll('[data-plan]').forEach(function (a) {
     var plan = SITIO.planes[a.getAttribute('data-plan')];
     if (!plan) return;
-    a.href = 'https://wa.me/' + SITIO.whatsappId + '?text=' + encodeURIComponent(plan.mensaje);
+    a.href = 'mailto:' + SITIO.email +
+      '?subject=' + encodeURIComponent(plan.nombre + ' - Komandi') +
+      '&body=' + encodeURIComponent(plan.mensaje);
     a.target = '_blank';
     a.rel = 'noopener';
   });
 
-  document.querySelectorAll('[data-email]').forEach(function (a) {
-    a.href = 'mailto:' + SITIO.email;
-  });
-
-  var devWa = document.querySelectorAll('[data-dev-wa]');
-  var devEmail = document.querySelectorAll('[data-dev-email]');
   function ponerDevEnlaces(mensaje) {
-    var waUrl = 'https://wa.me/' + SITIO.whatsappId + '?text=' + encodeURIComponent(mensaje);
-    devWa.forEach(function (a) {
-      a.href = waUrl;
-      a.target = '_blank';
-      a.rel = 'noopener';
-    });
-    devEmail.forEach(function (a) {
+    document.querySelectorAll('[data-dev-email]').forEach(function (a) {
       a.href = 'mailto:' + SITIO.email +
         '?subject=' + encodeURIComponent('Presupuesto de desarrollo a medida') +
         '&body=' + encodeURIComponent(mensaje);
@@ -92,10 +72,6 @@
 
   document.querySelectorAll('[data-horario]').forEach(function (el) {
     el.textContent = SITIO.horario;
-  });
-
-  document.querySelectorAll('[data-wa-txt]').forEach(function (el) {
-    el.textContent = SITIO.whatsapp;
   });
 
   document.querySelectorAll('[data-email-txt]').forEach(function (el) {

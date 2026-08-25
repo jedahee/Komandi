@@ -74,7 +74,7 @@ el mismo nombre.)*
 
 Todos los planes incluyen la **app completa** (carta, asistente, cocina en vivo,
 resumen y estadísticas por día), protección por PIN, configuración en colaboración
-contigo, gestión de dispositivos y soporte por WhatsApp, Instagram y email de
+contigo, gestión de dispositivos y soporte por email e Instagram de
 **10:00 a 20:00**.
 
 > Sin comisión por pedido. Sin contrato. Primer mes gratis.
@@ -132,7 +132,7 @@ datos en JSON. Coste de infraestructura casi nulo.
 
 ## 📬 Contacto
 
-Los datos de contacto (WhatsApp, Instagram, email) y el horario de atención se
+Los datos de contacto (email, Instagram) y el horario de atención se
 publican en la **web**. De momento, el enlace es temporal y todavía no lleva a
 ningún sitio:
 
