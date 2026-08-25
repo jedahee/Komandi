@@ -4520,7 +4520,7 @@ let repartosFiltro = 'pendientes'; /* 'pendientes' | 'entregados' */
 async function abrirRepartos() {
   if (catActual !== '__repartos') return 'ok';
   if (EMBEDDED_DATA) {
-    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.envio && c.envio.activo; });
+    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.estado === 'hecha' && c.envio && c.envio.activo; });
     renderRepartos();
     return 'ok';
   }
@@ -4717,7 +4717,9 @@ function manejarRepartoClick(e) {
    (no se pudo cargar; la pantalla de reintento queda visible). */
 async function abrirCobros() {
   if (EMBEDDED_DATA) {
-    cobrosDatos = { ok: true, comandas: cargarComandasLocal(), clientes: [], cobros: [] };
+    var todas = cargarComandasLocal();
+    var pendientes = todas.filter(function (c) { return c && !c.cobrado; });
+    cobrosDatos = { ok: true, comandas: pendientes, clientes: [], cobros: [] };
     renderCobros();
     return 'ok';
   }

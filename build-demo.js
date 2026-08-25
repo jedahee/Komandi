@@ -53,16 +53,18 @@ js = js.replace('const EMBEDDED_DATA = null;', 'const EMBEDDED_DATA = ' + litera
 
 /* --- Parches para demo: hacer que cobros/repartos funcionen en local --- */
 
-/* 1) abrirRepartos: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage */
+/* 1) abrirRepartos: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage.
+   Filtra comandas hechas con envío activo (pendientes de reparto). */
 js = js.replace(
   /async function abrirRepartos\(\) \{\n  if \(catActual !== '__repartos'\) return 'ok';\n  if \(EMBEDDED_DATA\) return 'error';/,
-  'async function abrirRepartos() {\n  if (catActual !== \'__repartos\') return \'ok\';\n  if (EMBEDDED_DATA) {\n    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.envio && c.envio.activo; });\n    renderRepartos();\n    return \'ok\';\n  }'
+  'async function abrirRepartos() {\n  if (catActual !== \'__repartos\') return \'ok\';\n  if (EMBEDDED_DATA) {\n    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.estado === \'hecha\' && c.envio && c.envio.activo; });\n    renderRepartos();\n    return \'ok\';\n  }'
 );
 
-/* 2) abrirCobros: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage */
+/* 2) abrirCobros: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage.
+   Muestra comandas no cobradas del historial. */
 js = js.replace(
   /async function abrirCobros\(\) \{\n  if \(EMBEDDED_DATA\) return 'error';/,
-  'async function abrirCobros() {\n  if (EMBEDDED_DATA) {\n    cobrosDatos = { ok: true, comandas: cargarComandasLocal(), clientes: [], cobros: [] };\n    renderCobros();\n    return \'ok\';\n  }'
+  'async function abrirCobros() {\n  if (EMBEDDED_DATA) {\n    var todas = cargarComandasLocal();\n    var pendientes = todas.filter(function (c) { return c && !c.cobrado; });\n    cobrosDatos = { ok: true, comandas: pendientes, clientes: [], cobros: [] };\n    renderCobros();\n    return \'ok\';\n  }'
 );
 
 const salida = html
