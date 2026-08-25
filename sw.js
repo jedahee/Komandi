@@ -5,7 +5,7 @@
    vieja. En línea siempre se sirve lo nuevo (network-first); la caché solo
    da soporte offline. */
 
-const VERSION = 'v1';
+const VERSION = 'v3';
 const CACHE = 'komandi-landing-' + VERSION;
 
 const CORE = [
@@ -46,7 +46,10 @@ self.addEventListener('activate', (e) => {
 });
 
 function desdeCache(req) {
-  return caches.match(req).then((hit) => hit || caches.match('./'));
+  return caches.match(req).then((hit) => {
+    if (hit) return hit;
+    return new Response('Not found', { status: 404, statusText: 'Not found' });
+  });
 }
 
 function conTimeout(promise, ms) {
@@ -65,6 +68,7 @@ self.addEventListener('fetch', (e) => {
   let url;
   try { url = new URL(req.url); } catch (err) { return; }
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.indexOf('/demo/') === 0) return;
 
   e.respondWith(
     conTimeout(fetch(req), TIMEOUT_MS)
