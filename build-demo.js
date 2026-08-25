@@ -51,6 +51,20 @@ const json = JSON.stringify(datos);
 const literal = json.replace(/<\//g, '<\\/');
 js = js.replace('const EMBEDDED_DATA = null;', 'const EMBEDDED_DATA = ' + literal + ';');
 
+/* --- Parches para demo: hacer que cobros/repartos funcionen en local --- */
+
+/* 1) abrirRepartos: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage */
+js = js.replace(
+  /async function abrirRepartos\(\) \{\n  if \(catActual !== '__repartos'\) return 'ok';\n  if \(EMBEDDED_DATA\) return 'error';/,
+  'async function abrirRepartos() {\n  if (catActual !== \'__repartos\') return \'ok\';\n  if (EMBEDDED_DATA) {\n    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.envio && c.envio.activo; });\n    renderRepartos();\n    return \'ok\';\n  }'
+);
+
+/* 2) abrirCobros: quitar el return 'error' de EMBEDDED_DATA y cargar desde localStorage */
+js = js.replace(
+  /async function abrirCobros\(\) \{\n  if \(EMBEDDED_DATA\) return 'error';/,
+  'async function abrirCobros() {\n  if (EMBEDDED_DATA) {\n    cobrosDatos = { ok: true, comandas: cargarComandasLocal(), clientes: [], cobros: [] };\n    renderCobros();\n    return \'ok\';\n  }'
+);
+
 const salida = html
   .replace(/<link rel="manifest"[^>]*>\n/g, '')
   .replace(/<link rel="icon"[^>]*>\n/g, '')

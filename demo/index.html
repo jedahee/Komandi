@@ -4519,7 +4519,11 @@ let repartosFiltro = 'pendientes'; /* 'pendientes' | 'entregados' */
 
 async function abrirRepartos() {
   if (catActual !== '__repartos') return 'ok';
-  if (EMBEDDED_DATA) return 'error';
+  if (EMBEDDED_DATA) {
+    repartosDatos = cargarComandasLocal().filter(function (c) { return c && c.envio && c.envio.activo; });
+    renderRepartos();
+    return 'ok';
+  }
   let datos = null;
   try {
     const res = await fetchApi('/api/repartos/panel', { cache: 'no-store' });
@@ -4712,7 +4716,11 @@ function manejarRepartoClick(e) {
    Devuelve 'ok', 'cancelado' (cerraron el modal del PIN) o 'error'
    (no se pudo cargar; la pantalla de reintento queda visible). */
 async function abrirCobros() {
-  if (EMBEDDED_DATA) return 'error';
+  if (EMBEDDED_DATA) {
+    cobrosDatos = { ok: true, comandas: cargarComandasLocal(), clientes: [], cobros: [] };
+    renderCobros();
+    return 'ok';
+  }
   let datos = null;
   const estado = await pedirEstado();
   if (estado && estado.pin && paginaProtegidaUsuario('cobros')) {
