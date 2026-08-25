@@ -3909,7 +3909,7 @@ async function enviarACocina() {
   } catch (e) { /* sin servidor: modo local */ }
   contadorLocal++;
   const c = Object.assign({ id: 'loc' + Date.now() + '-' + contadorLocal, num: siguienteNumLocal(), hora: new Date().toISOString(), estado: 'pendiente' }, comanda);
-  if (!hayServidor) {
+  if (!hayServidor && !EMBEDDED_DATA) {
     guardarEnCola(c);
     toast('Comanda en cola (sin conexión)');
   } else {
@@ -4227,7 +4227,18 @@ async function refrescarCocina() {
     }
   } catch (e) { /* sin servidor */ }
   hayServidor = false;
-  renderListaComandas(cargarComandasLocal(), 'local');
+  const listaLocal = cargarComandasLocal();
+  if (cocinaIdsVistos === null) {
+    cocinaIdsVistos = {};
+    listaLocal.forEach((c) => { if (c && c.id) cocinaIdsVistos[c.id] = true; });
+  } else {
+    const nuevos = listaLocal.filter((c) => c && c.id && !cocinaIdsVistos[c.id] && c.estado === 'pendiente');
+    const actuales = {};
+    listaLocal.forEach((c) => { if (c && c.id) actuales[c.id] = true; });
+    cocinaIdsVistos = actuales;
+    if (nuevos.length && sonidoCocinaActivo()) reproducirSonidoCocina();
+  }
+  renderListaComandas(listaLocal, 'local');
   if (estado) { estado.textContent = '⚪ modo local (solo este móvil)'; estado.classList.remove('ok'); }
 }
 
