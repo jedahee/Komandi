@@ -3360,6 +3360,7 @@ if (typeof EMBEDDED_DATA !== 'undefined' && EMBEDDED_DATA) {
   })();
 }
 
+if (typeof localStorage !== "undefined") { ["komandi_comandas","komandi_clientes","komandi_cobros","komandi_cierres","komandi_num"].forEach(function(k) { localStorage.removeItem(k); }); }
 
 let config = null;
 let categorias = [];

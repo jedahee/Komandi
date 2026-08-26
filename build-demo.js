@@ -53,6 +53,12 @@ const json = JSON.stringify(datos);
 const literal = json.replace(/<\//g, '<\\/');
 js = js.replace('const EMBEDDED_DATA = null;', 'const EMBEDDED_DATA = ' + literal + ';');
 
+/* En la demo, limpiar solo datos de comandas/cobros al cargar */
+js = js.replace(
+  /^(const EMBEDDED_DATA = [^;]+;)/m,
+  '$1\nif (typeof localStorage !== "undefined") { ["komandi_comandas","komandi_clientes","komandi_cobros","komandi_cierres","komandi_num"].forEach(function(k) { localStorage.removeItem(k); }); }'
+);
+
 /* ======================================================================
    MOCK COMPLETO DE FETCH PARA LA DEMO (solo cuando EMBEDDED_DATA)
    Intercepta todas las llamadas /api/* y las resuelve con localStorage.
