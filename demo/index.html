@@ -201,6 +201,53 @@ button { font-family: inherit; color: inherit; background: none; border: none; c
 .opcion.agotada .check { color: var(--texto2); }
 .opc-agotado-txt { font-style: normal; font-weight: 800; font-size: 11px; color: var(--texto2); }
 .ingrediente.agotada { opacity: .6; filter: grayscale(.5); border-style: dashed; }
+
+/* Selector de color (swatch + paleta + hexadecimal) en la config */
+.cp { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
+.cp-btn {
+  width: 34px; height: 34px; border-radius: 10px; cursor: pointer; border: 1.5px solid var(--borde);
+  background: var(--cp, #cccccc); position: relative; transition: transform .12s ease, border-color .15s;
+}
+.cp-btn:hover { transform: scale(1.06); border-color: var(--texto2); }
+.cp-btn::after {
+  content: ''; position: absolute; inset: 0; border-radius: 10px;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
+}
+.cp-btn:not([data-tiene]) { background: repeating-conic-gradient(#e0e0e0 0% 25%, #fff 0% 50%) 50%/12px 12px !important; }
+.cp-pop {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 60; width: 248px;
+  max-width: calc(100vw - 24px);
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px;
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+}
+.cp-swat {
+  width: 30px; height: 30px; border-radius: 8px; cursor: pointer; border: 2px solid transparent;
+  background: var(--cp, #ccc); position: relative; padding: 0;
+}
+.cp-swat:hover { transform: scale(1.12); }
+.cp-swat[data-activo] { border-color: #fff; box-shadow: 0 0 0 2px var(--cp), 0 0 0 3.5px var(--texto2); }
+.cp-clear {
+  grid-column: 1 / -1; width: 100%; margin-top: 2px; padding: 6px 10px; cursor: pointer;
+  border: 1px dashed var(--borde); border-radius: 8px; background: transparent;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--texto2); transition: color .15s ease, border-color .15s ease;
+}
+.cp-clear::before { content: '✕ '; }
+.cp-clear:hover { color: var(--peligro); border-color: var(--peligro); }
+.cp-hex { grid-column: 1 / -1; width: 100%; margin-top: 2px; font-size: 12px; text-transform: lowercase; }
+@media (max-width: 560px) {
+  .cp-pop {
+    position: fixed; top: auto; left: 12px; right: 12px; bottom: 12px;
+    width: auto; min-width: 0; max-width: none; z-index: 70; margin: 0;
+  }
+}
+/* Badge de color en la cocina (mods) */
+.c-mod { display: inline-flex; align-items: center; gap: 5px; }
+.c-mod-color {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  background: var(--mc, #999); box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+}
 .opc-agotado { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed var(--borde); background: transparent; transition: border-color .15s ease, background .15s ease; }
 .opc-agotado input { width: 0; height: 0; opacity: 0; position: absolute; }
 .opc-agotado span { font-size: 16px; line-height: 1; opacity: .45; filter: grayscale(.7); transition: opacity .15s ease, filter .15s ease, transform .15s ease; }
@@ -3749,6 +3796,94 @@ function buscarProducto(id) {
   return null;
 }
 
+/* Paleta de colores para etiquetar ingredientes/opciones en cocina.
+   Colores bonitos y de gran variedad, escogidos para que se distingan bien
+   entre sí y queden legibles en la tarjeta de cocina. */
+const COLOR_PALETA = [
+  '#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5',
+  '#039be5', '#00acc1', '#00897b', '#43a047', '#7cb342', '#c0ca33',
+  '#fdd835', '#ffb300', '#fb8c00', '#f4511e', '#6d4c41', '#546e7a',
+  '#455a64', '#b0bec5'
+];
+function esColorValido(x) {
+  return typeof x === 'string' && /^#[0-9a-f]{6}$/i.test(x.trim());
+}
+function normColor(x) {
+  return esColorValido(x) ? x.trim().toLowerCase() : '';
+}
+
+/* Renderiza el selector de color que se pone al lado de cada opción en la
+   config: un swatch que abre una paleta + campo hexadecimal. El valor está en
+   un input oculto (data-campo="*-color") que la extracción lee igual que el
+   resto de campos. */
+function colorPickerHtml(campo, valor) {
+   const v = normColor(valor);
+   const swatches = COLOR_PALETA.map((c) =>
+     '<button type="button" class="cp-swat" data-cp="' + c + '" style="--cp:' + c + ';background:' + c + '"' + (v === c ? ' data-activo="1"' : '') + ' aria-label="' + c + '"></button>'
+   ).join('');
+return (
+    '<div class="cp">' +
+      '<button type="button" class="cp-btn" data-cp-toggle="1" style="' + (v ? '--cp:' + v + ';background:' + v : '') + '" aria-label="Elegir color"' + (v ? ' data-tiene="1"' : '') + '></button>' +
+      '<div class="cp-pop oculto">' +
+        swatches +
+        '<button type="button" class="cp-clear" data-cp-clear="1">Sin color</button>' +
+        '<input class="inp cp-hex" data-cp-hex="1" value="' + esc(v) + '" maxlength="7" placeholder="#aabbcc" aria-label="Color hexadecimal">' +
+      '</div>' +
+      '<input type="hidden" data-campo="' + esc(campo) + '" value="' + esc(v) + '">' +
+    '</div>'
+  );
+ }
+
+/* Refleja un color ('' = sin color) en todos los elementos de un selector .cp */
+function actualizarCP(cp, color) {
+  if (!cp) return;
+  const v = normColor(color);
+  const hidden = cp.querySelector('input[data-campo]');
+  const btn = cp.querySelector('.cp-btn');
+  const hex = cp.querySelector('.cp-hex');
+  if (hidden) hidden.value = v;
+  if (btn) {
+    if (v) {
+      btn.style.setProperty('--cp', v);
+      btn.style.background = v;
+      btn.setAttribute('data-tiene', '1');
+    } else {
+      btn.style.removeProperty('--cp');
+      btn.style.background = '';
+      btn.removeAttribute('data-tiene');
+    }
+  }
+  if (hex) hex.value = v;
+  cp.querySelectorAll('[data-cp]').forEach((sb) => {
+    if (sb.dataset.cp === v) sb.setAttribute('data-activo', '1');
+    else sb.removeAttribute('data-activo');
+  });
+}
+
+/* Aplica el color elegido a todas las opciones que tengan el mismo nombre
+   en la config (igual que el cascada de agotado). Sin color limpia también. */
+function aplicarColorCascada(cp) {
+  const fila = cp ? cp.closest('.admin-op-fila, .admin-multi, .admin-sub-fila') : null;
+  if (!fila) return;
+  const nombreEl = fila.querySelector('[data-campo="op-nombre"], [data-campo="ing-nombre"], [data-campo="multi-nombre"], [data-campo="sub-nombre"]');
+  const hidden = cp.querySelector('input[data-campo]');
+  if (!nombreEl || !hidden) return;
+  const nombre = (nombreEl.value || '').trim().toLowerCase();
+  if (!nombre) return;
+  const color = hidden.value;
+  if (color && !esColorValido(color)) return;
+  document.querySelectorAll('#admin-cuerpo .cp').forEach((otroCP) => {
+    if (otroCP === cp) return;
+    const otroHidden = otroCP.querySelector('input[data-campo]');
+    if (!otroHidden) return;
+    const otroFila = otroCP.closest('.admin-op-fila, .admin-multi, .admin-sub-fila');
+    if (!otroFila) return;
+    const otroNombreEl = otroFila.querySelector('[data-campo="op-nombre"], [data-campo="ing-nombre"], [data-campo="multi-nombre"], [data-campo="sub-nombre"]');
+    if (!otroNombreEl) return;
+    if ((otroNombreEl.value || '').trim().toLowerCase() === nombre) actualizarCP(otroCP, color);
+  });
+}
+
 function pasosDeProducto(p) {
   const pasos = [];
   if (p.tamanos && p.tamanos.length) {
@@ -4684,6 +4819,41 @@ function renderListaComandas(lista, origen) {
   }
 }
 
+/* Devuelve el color asignado a una opción/ingrediente por su nombre.
+   Los nombres pueden llevar sufijos («Cebolla ×2»), así que se compara
+   el nombre base. */
+let _colorCache = {};
+function _coloresMap() {
+  if (_colorCache._key === config && config) return _colorCache;
+  const map = { _key: config };
+  (categorias || []).forEach((cat) => {
+    (cat.productos || []).forEach((p) => {
+      (p.pasos || []).forEach((paso) => {
+        if (paso.tipo === 'seleccion') {
+          (paso.opciones || []).forEach((o) => { if (o.color) map[(o.nombre || '').toString().toLowerCase()] = o.color; });
+        } else {
+          (paso.items || []).forEach((it) => {
+            if (it.color) map[(it.nombre || '').toString().toLowerCase()] = it.color;
+            (it.opciones || []).forEach((so) => { if (so.color) map[(so.nombre || '').toString().toLowerCase()] = so.color; });
+          });
+        }
+      });
+    });
+  });
+  _colorCache = map;
+  return map;
+}
+function colorDeNombre(nombre) {
+  if (!nombre) return '';
+  const map = _coloresMap();
+  const base = String(nombre).toLowerCase();
+  if (map[base]) return map[base];
+  /* Quitar sufijos tipo «×2» o «(salsa)» */
+  const limpio = base.replace(/^\s*(sin\s+|extra\s+)?/, '').replace(/\s*[×x]\s*\d+.*$/, '').replace(/\s*\(.*\)\s*$/, '').trim();
+  if (map[limpio]) return map[limpio];
+  if (map[base.replace(/\s*×\s*\d+.*$/, '').trim()]) return map[base.replace(/\s*×\s*\d+.*$/, '').trim()];
+  return '';
+}
 function tarjetaComanda(c) {
   const fecha = c.hora ? new Date(c.hora) : null;
   const horaTxt = fecha ? fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -4706,7 +4876,10 @@ function tarjetaComanda(c) {
           '<span class="c-item-precio">' + fmt(it.sub) + '</span>' +
         '</div>' +
         (mods.length ? '<div class="c-mods">' +
-          mods.map((m) => '<span class="c-mod">' + esc(m.n) + ' <em>+' + fmt(m.p) + '</em></span>').join('') +
+          mods.map((m) => {
+            const col = colorDeNombre(m.n);
+            return '<span class="c-mod">' + (col ? '<i class="c-mod-color" style="--mc:' + col + ';background:' + col + '"></i>' : '') + esc(m.n) + ' <em>+' + fmt(m.p) + '</em></span>';
+          }).join('') +
         '</div>' : '') +
         (notas.length ? '<div class="c-detalle">' + notas.map((n) => '· ' + n).join(' ') + '</div>' : '') +
       '</div>'
@@ -7040,6 +7213,7 @@ function adminPasoHtml(paso) {
           '<div class="admin-op-fila">' +
             '<input class="inp inp-nombre" data-campo="op-nombre" value="' + esc(o.nombre) + '" placeholder="Opción">' +
             '<input class="inp inp-precio" data-campo="op-precio" value="' + esc(o.precio) + '" inputmode="decimal" aria-label="Precio (+/-)">' +
+            colorPickerHtml('op-color', o.color) +
             '<label class="opc-agotado" title="Marcar como agotada"><input type="checkbox" data-campo="op-agotado"' + (o.agotado ? ' checked' : '') + '><span>🙅</span></label>' +
             '<button class="icon-btn admin-del" data-accion="del-op" aria-label="Quitar opción">✕</button>' +
           '</div>'
@@ -7054,6 +7228,7 @@ function adminPasoHtml(paso) {
             '<input class="inp inp-nombre" data-campo="ing-nombre" value="' + esc(it.nombre) + '" placeholder="Ingrediente">' +
             '<input class="inp inp-mini" data-campo="ing-cantidad" value="' + esc(it.cantidad) + '" inputmode="numeric" placeholder="incluida">' +
             '<input class="inp inp-precio" data-campo="ing-precio" value="' + esc(it.precioExtra) + '" inputmode="decimal" placeholder="extra €">' +
+            colorPickerHtml('ing-color', it.color) +
             '<label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="ing-agotado"' + (it.agotado ? ' checked' : '') + '><span>🙅</span></label>' +
             '<button class="icon-btn admin-del" data-accion="del-ing" aria-label="Quitar ingrediente">✕</button>' +
           '</div>'
@@ -7069,6 +7244,7 @@ function adminPasoHtml(paso) {
             '<div class="admin-op-fila">' +
               '<input class="inp inp-nombre" data-campo="multi-nombre" value="' + esc(it.nombre) + '" placeholder="Extra">' +
               '<input class="inp inp-precio" data-campo="multi-precio" value="' + esc(it.precio) + '" inputmode="decimal" aria-label="Precio">' +
+              colorPickerHtml('multi-color', it.color) +
               '<button class="icon-btn admin-del" data-accion="del-multi" aria-label="Quitar extra">✕</button>' +
             '</div>' +
             '<div class="admin-op-fila-sec">' +
@@ -7081,6 +7257,7 @@ function adminPasoHtml(paso) {
                 '<div class="admin-sub-fila">' +
                   '<input class="inp inp-nombre" data-campo="sub-nombre" value="' + esc(so.nombre) + '" placeholder="Salsa">' +
                   '<input class="inp inp-precio" data-campo="sub-precio" value="' + esc(so.precio) + '" inputmode="decimal" aria-label="Precio">' +
+                  colorPickerHtml('sub-color', so.color) +
                   '<label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="sub-agotado"' + (so.agotado ? ' checked' : '') + '><span>🙅</span></label>' +
                   '<button class="icon-btn admin-del" data-accion="del-sub" aria-label="Quitar salsa">✕</button>' +
                 '</div>'
@@ -7106,6 +7283,18 @@ function bindAdminEventos() {
   const cuerpo = $('#admin-cuerpo');
   cuerpo.addEventListener('change', (e) => {
     const cb = e.target;
+    /* Input hexadecimal del selector de color */
+    if (cb && cb.dataset && cb.dataset.cpHex) {
+      const cp = cb.closest('.cp');
+      if (cp) {
+        const val = cb.value.trim();
+        if (val === '' || esColorValido(val)) {
+          actualizarCP(cp, val.toLowerCase());
+          aplicarColorCascada(cp);
+        }
+      }
+      return;
+    }
     if (cb && cb.type === 'checkbox' && cb.dataset && cb.dataset.campo && cb.dataset.campo.indexOf('agotado') >= 0) {
       const lab = cb.closest('label.opc-agotado, label.agotado-check');
       if (lab) lab.classList.toggle('activo', cb.checked);
@@ -7134,6 +7323,33 @@ function bindAdminEventos() {
     }
   });
   cuerpo.addEventListener('click', async (e) => {
+    /* Selector de color: abrir/cerrar popover y elegir swatch */
+    const cpToggle = e.target.closest('[data-cp-toggle]');
+    if (cpToggle) {
+      const cp = cpToggle.closest('.cp');
+      const pop = cp ? cp.querySelector('.cp-pop') : null;
+      document.querySelectorAll('#admin-cuerpo .cp-pop').forEach((p) => { if (p !== pop) p.classList.add('oculto'); });
+      if (pop) pop.classList.toggle('oculto');
+      return;
+    }
+    /* Cerrar popover si se pulsa fuera */
+    if (!e.target.closest('.cp')) {
+      document.querySelectorAll('#admin-cuerpo .cp-pop').forEach((p) => p.classList.add('oculto'));
+    }
+    const cpSwat = e.target.closest('[data-cp]');
+    if (cpSwat) {
+      const cp = cpSwat.closest('.cp');
+      actualizarCP(cp, cpSwat.dataset.cp);
+      aplicarColorCascada(cp);
+      return;
+    }
+    const cpClear = e.target.closest('[data-cp-clear]');
+    if (cpClear) {
+      const cp = cpClear.closest('.cp');
+      actualizarCP(cp, '');
+      aplicarColorCascada(cp);
+      return;
+    }
     if (e.target.closest('#admin-config-avanzada-toggle')) {
       const caja = $('#admin-config-avanzada');
       const btn = $('#admin-config-avanzada-toggle');
@@ -7228,9 +7444,9 @@ function bindAdminEventos() {
     if (accion === 'add-op' || accion === 'add-ing' || accion === 'add-multi') {
       const div = document.createElement('div');
       div.innerHTML = {
-        'add-op': '<div class="admin-op-fila"><input class="inp inp-nombre" data-campo="op-nombre" value="Nueva"><input class="inp inp-precio" data-campo="op-precio" value="0" inputmode="decimal" aria-label="Precio (+/-)"><label class="opc-agotado" title="Marcar como agotada"><input type="checkbox" data-campo="op-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-op" aria-label="Quitar opción">✕</button></div>',
-        'add-ing': '<div class="admin-op-fila ing"><input class="inp inp-nombre" data-campo="ing-nombre" value="Ingrediente" placeholder="Ingrediente"><input class="inp inp-mini" data-campo="ing-cantidad" value="1" inputmode="numeric" placeholder="incluida"><input class="inp inp-precio" data-campo="ing-precio" value="0" inputmode="decimal" placeholder="extra €"><label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="ing-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-ing" aria-label="Quitar ingrediente">✕</button></div>',
-        'add-multi': '<div class="admin-multi"><div class="admin-op-fila"><input class="inp inp-nombre" data-campo="multi-nombre" value="Extra" placeholder="Extra"><input class="inp inp-precio" data-campo="multi-precio" value="0" inputmode="decimal" aria-label="Precio"><button class="icon-btn admin-del" data-accion="del-multi" aria-label="Quitar extra">✕</button></div><div class="admin-op-fila-sec"><label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="multi-agotado"><span>🙅</span></label><button class="icon-btn admin-sub-toggle" data-accion="toggle-sub" aria-label="Salsas">🍅</button></div><div class="admin-sub"><div class="admin-sub-titulo">Salsas (sub-opciones)</div><button class="btn btn-secundario btn-mini" data-accion="add-sub">+ Salsa</button></div></div>'
+        'add-op': '<div class="admin-op-fila"><input class="inp inp-nombre" data-campo="op-nombre" value="Nueva"><input class="inp inp-precio" data-campo="op-precio" value="0" inputmode="decimal" aria-label="Precio (+/-)">' + colorPickerHtml('op-color', '') + '<label class="opc-agotado" title="Marcar como agotada"><input type="checkbox" data-campo="op-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-op" aria-label="Quitar opción">✕</button></div>',
+        'add-ing': '<div class="admin-op-fila ing"><input class="inp inp-nombre" data-campo="ing-nombre" value="Ingrediente" placeholder="Ingrediente"><input class="inp inp-mini" data-campo="ing-cantidad" value="1" inputmode="numeric" placeholder="incluida"><input class="inp inp-precio" data-campo="ing-precio" value="0" inputmode="decimal" placeholder="extra €">' + colorPickerHtml('ing-color', '') + '<label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="ing-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-ing" aria-label="Quitar ingrediente">✕</button></div>',
+        'add-multi': '<div class="admin-multi"><div class="admin-op-fila"><input class="inp inp-nombre" data-campo="multi-nombre" value="Extra" placeholder="Extra"><input class="inp inp-precio" data-campo="multi-precio" value="0" inputmode="decimal" aria-label="Precio">' + colorPickerHtml('multi-color', '') + '<button class="icon-btn admin-del" data-accion="del-multi" aria-label="Quitar extra">✕</button></div><div class="admin-op-fila-sec"><label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="multi-agotado"><span>🙅</span></label><button class="icon-btn admin-sub-toggle" data-accion="toggle-sub" aria-label="Salsas">🍅</button></div><div class="admin-sub"><div class="admin-sub-titulo">Salsas (sub-opciones)</div><button class="btn btn-secundario btn-mini" data-accion="add-sub">+ Salsa</button></div></div>'
       }[accion];
       btn.insertAdjacentElement('beforebegin', div.firstElementChild);
       return;
@@ -7248,7 +7464,7 @@ function bindAdminEventos() {
       if (!sub) return;
       sub.classList.add('abierto');
       const div = document.createElement('div');
-      div.innerHTML = '<div class="admin-sub-fila"><input class="inp inp-nombre" data-campo="sub-nombre" value="Salsa" placeholder="Salsa"><input class="inp inp-precio" data-campo="sub-precio" value="0" inputmode="decimal" aria-label="Precio"><label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="sub-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-sub" aria-label="Quitar salsa">✕</button></div>';
+      div.innerHTML = '<div class="admin-sub-fila"><input class="inp inp-nombre" data-campo="sub-nombre" value="Salsa" placeholder="Salsa"><input class="inp inp-precio" data-campo="sub-precio" value="0" inputmode="decimal" aria-label="Precio">' + colorPickerHtml('sub-color', '') + '<label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="sub-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-sub" aria-label="Quitar salsa">✕</button></div>';
       btn.insertAdjacentElement('beforebegin', div.firstElementChild);
       return;
     }
@@ -7305,6 +7521,8 @@ function leerPaso(el) {
       };
       const agot = f.querySelector('[data-campo="op-agotado"]');
       if (agot && agot.checked) o.agotado = true;
+      const col = normColor((f.querySelector('[data-campo="op-color"]') || { value: '' }).value);
+      if (col) o.color = col;
       return o;
     });
   } else if (paso.tipo === 'ingredientes') {
@@ -7317,6 +7535,8 @@ function leerPaso(el) {
       };
       const agot = f.querySelector('[data-campo="ing-agotado"]');
       if (agot && agot.checked) it.agotado = true;
+      const col = normColor((f.querySelector('[data-campo="ing-color"]') || { value: '' }).value);
+      if (col) it.color = col;
       return it;
     });
   } else {
@@ -7330,6 +7550,8 @@ function leerPaso(el) {
         };
         const agotS = sf.querySelector('[data-campo="sub-agotado"]');
         if (agotS && agotS.checked) so.agotado = true;
+        const scol = normColor((sf.querySelector('[data-campo="sub-color"]') || { value: '' }).value);
+        if (scol) so.color = scol;
         return so;
       }) : [];
       const it = {
@@ -7340,6 +7562,8 @@ function leerPaso(el) {
       };
       const agot = f.querySelector('[data-campo="multi-agotado"]');
       if (agot && agot.checked) it.agotado = true;
+      const col = normColor((f.querySelector('[data-campo="multi-color"]') || { value: '' }).value);
+      if (col) it.color = col;
       return it;
     });
   }

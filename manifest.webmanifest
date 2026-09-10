@@ -3,7 +3,7 @@
   "short_name": "Komandi",
   "description": "App de comandas para comida para llevar: carta, pedido y ticket a cocina al momento. Sin terminales, sin comisiones.",
   "lang": "es",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#16100d",

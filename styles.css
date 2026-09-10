@@ -92,6 +92,42 @@ img { max-width: 100%; display: block; }
 }
 .brand img { border-radius: 10px; }
 
+.cab-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.cab-ctas {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.cab-planes {
+  background: transparent;
+  color: var(--texto2);
+}
+.cab-planes:hover { background: var(--superficie2); color: var(--texto); }
+
+/* Skip-link: solo visible al recibir el foco (teclado) */
+.saltar {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 40;
+  padding: .6rem 1rem;
+  border-radius: 10px;
+  background: var(--principal2, #f2b13d);
+  color: #16100d;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.saltar:focus { top: .75rem; }
+
 .cab .btn { animation: entrar-lateral .5s ease both; }
 
 @keyframes entrar-lateral {
@@ -101,6 +137,25 @@ img { max-width: 100%; display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   .brand, .cab .btn { animation: none; }
+}
+
+/* Cabecera responsive en móvil: menos padding, botones compactos, logo menor */
+@media (max-width: 480px) {
+  .cab { padding: .55rem .8rem; gap: .6rem; }
+  .cab-nav { gap: .6rem; }
+  .cab-ctas { gap: .4rem; }
+  .brand { font-size: 1rem; gap: .45rem; }
+  .brand img { width: 34px; height: 34px; border-radius: 8px; }
+  .cab .btn {
+    padding: .5rem .7rem;
+    font-size: .83rem;
+  }
+  .saltar {
+    left: .6rem;
+    padding: .55rem .8rem;
+    font-size: .9rem;
+  }
+  .saltar:focus { top: .6rem; }
 }
 
 /* ---------- Hero ---------- */
@@ -354,11 +409,31 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Comparativa ---------- */
 .tabla-envoltura {
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: var(--superficie);
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.tabla-envoltura::after {
+  content: '→ Desliza →';
+  display: none;
+  text-align: center;
+  padding: .45rem .6rem .55rem;
+  font-size: .78rem;
+  color: var(--texto2);
+}
+
+@media (max-width: 760px) {
+  .tabla-envoltura {
+    box-shadow: inset -14px 0 14px -14px rgba(0, 0, 0, .4);
+  }
+  .tabla-envoltura::after {
+    display: block;
+  }
 }
 
 table.compara {
@@ -438,6 +513,23 @@ details li:last-child { margin-bottom: 0; }
 details p + ul { margin-top: -.4rem; }
 details ul + p { padding-top: .3rem; }
 
+/* Apertura/cierre suave del FAQ (animado por JS vía max-height) */
+.faq-cuerpo {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .3s ease;
+}
+/* Sin JS: el primer FAQ (open) se muestra a lo grande y el resto los colapsa el navegador */
+details[open] .faq-cuerpo { max-height: none; }
+summary {
+  border-radius: inherit;
+  transition: background .15s ease;
+}
+summary:hover { background: var(--superficie2); }
+details[open] { border-color: rgba(242, 177, 61, .5); }
+summary::after { transition: transform .2s ease, color .2s ease; }
+details[open] summary::after { color: var(--principal2); }
+
 /* ---------- CTA final ---------- */
 .cta-final {
   text-align: center;
@@ -488,6 +580,19 @@ details ul + p { padding-top: .3rem; }
 .tarjeta-contacto:hover { background: var(--superficie2); }
 .tarjeta-contacto h3 { color: var(--texto); }
 .tarjeta-contacto p { color: var(--principal2); font-weight: 600; }
+
+/* En PC las dos tarjetas (email + Instagram) se centran */
+@media (min-width: 760px) {
+  .grid3.contacto {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .grid3.contacto .tarjeta-contacto {
+    flex: 0 1 300px;
+  }
+}
 
 /* ---------- CTA flotante ---------- */
 .cta-sticky {

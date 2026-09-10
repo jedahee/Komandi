@@ -13,7 +13,7 @@
       instagram: 'https://www.instagram.com/komandiapp'
     },
     horario: '10:00 a 20:00',    // ← horario de soporte y atención
-    url: 'https://TUUSUARIO.github.io/kebapps/', // ← URL final de la landing (para el QR del folleto)
+    url: 'https://jedahee.github.io/Komandi-Landing/', // ← URL final de la landing (para el QR del folleto)
     demo: 'demo/index.html',     // ← Generado por build-demo.js: app completa en un solo archivo, SIN PIN
     mensaje: 'Hola, he probado la demo de Komandi y quiero montarla en mi negocio.',
     planes: {
@@ -32,7 +32,7 @@
     }
   };
 
-  document.querySelectorAll('[data-email], [data-wa]').forEach(function (a) {
+  document.querySelectorAll('[data-email]').forEach(function (a) {
     a.href = 'mailto:' + SITIO.email +
       '?subject=' + encodeURIComponent(SITIO.mensaje) +
       '&body=' + encodeURIComponent(SITIO.mensaje);
@@ -177,4 +177,26 @@
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   }
+
+  /* FAQ: animación de apertura/cierre en ambos sentidos (max-height vía JS,
+   * funciona también en navegadores y WebViews antiguos) */
+  document.querySelectorAll('#faq details').forEach(function (d) {
+    var c = d.querySelector('.faq-cuerpo');
+    if (!c) return;
+    c.style.maxHeight = d.open ? 'none' : '0px';
+    d.addEventListener('toggle', function () {
+      if (d.open) {
+        c.style.maxHeight = c.scrollHeight + 'px';
+        var fin = function () {
+          c.style.maxHeight = 'none';
+          c.removeEventListener('transitionend', fin);
+        };
+        c.addEventListener('transitionend', fin);
+      } else {
+        c.style.maxHeight = c.scrollHeight + 'px';
+        void c.offsetHeight;
+        c.style.maxHeight = '0px';
+      }
+    });
+  });
 })();

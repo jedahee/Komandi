@@ -136,8 +136,8 @@ Los datos de contacto (email, Instagram) y el horario de atención se
 publican en la **web**. De momento, el enlace es temporal y todavía no lleva a
 ningún sitio:
 
-**[🌐 Ver la web](https://tudominio-pendiente.com)** — *enlace temporal, se
-actualizará con la URL definitiva cuando la web esté desplegada.*
+**[🌐 Ver la web](https://jedahee.github.io/Komandi-Landing/)** — *enlace temporal, se
+actualizará con la URL definitiva cuando haya dominio propio.*
 
 ---
 
