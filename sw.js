@@ -5,7 +5,7 @@
    vieja. En línea siempre se sirve lo nuevo (network-first); la caché solo
    da soporte offline. */
 
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = 'komandi-landing-' + VERSION;
 
 const CORE = [
@@ -13,6 +13,8 @@ const CORE = [
   './index.html',
   './app.js',
   './styles.css',
+  './assets/vendor/swiper/swiper-bundle.min.css',
+  './assets/vendor/swiper/swiper-bundle.min.js',
   './manifest.webmanifest',
   './robots.txt',
   './sitemap.xml',

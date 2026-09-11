@@ -37,6 +37,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -210,8 +211,8 @@
     <h1 class="reveal">La comanda de tu negocio, en el móvil que ya tienes.</h1>
     <p class="sub reveal">El comandero digital de tu negocio: carta, pedido y ticket a cocina al momento. Sin terminales, sin comisiones, en marcha en 10 minutos.</p>
     <div class="ctas reveal">
-      <a class="btn btn-primario btn-lg" data-demo>▶ Probar gratis</a>
-      <a class="btn btn-borde btn-lg" data-email>✉️ Montar la mía</a>
+      <a class="btn btn-primario btn-lg" data-demo><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> Probar gratis</a>
+      <a class="btn btn-borde btn-lg" data-email><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg> Montar la mía</a>
     </div>
     <ul class="chips reveal" aria-label="Ventajas">
       <li>Sin permanencia</li>
@@ -396,31 +397,54 @@
 <section class="seccion" id="capturas">
   <h2>Así se ve en el negocio</h2>
   <p class="introduccion">Capturas de la app en uso real, con datos de un kebab de verdad.</p>
-  <div class="galeria reveal-grupo">
-    <figure class="tel reveal">
-      <img src="assets/capturas/01-carta.webp" alt="Carta por categorías" loading="lazy">
-      <figcaption>Carta por categorías</figcaption>
-    </figure>
-    <figure class="tel reveal">
-      <img src="assets/capturas/02-wizard.webp" alt="Asistente de tamaño y carne" loading="lazy">
-      <figcaption>Asistente de pedido</figcaption>
-    </figure>
-    <figure class="tel reveal">
-      <img src="assets/capturas/03-resumen.webp" alt="Resumen de la comanda con total" loading="lazy">
-      <figcaption>Resumen con total</figcaption>
-    </figure>
-    <figure class="tel reveal">
-      <img src="assets/capturas/04-cocina.webp" alt="Cocina con tickets en vivo" loading="lazy">
-      <figcaption>Ticket en vivo en cocina</figcaption>
-    </figure>
-    <figure class="tel reveal">
-      <img src="assets/capturas/05-admin.webp" alt="Edición de precios y productos" loading="lazy">
-      <figcaption>Editar precios desde el móvil</figcaption>
-    </figure>
-    <figure class="tel reveal">
-      <img src="assets/capturas/06-pin.webp" alt="Pantalla de PIN de la tienda" loading="lazy">
-      <figcaption>Acceso protegido por PIN</figcaption>
-    </figure>
+  <div class="galeria reveal">
+    <div class="swiper" data-galeria>
+      <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/01-carta.webp" alt="Carta por categorías" loading="lazy">
+          <figcaption>Carta por categorías</figcaption>
+        </figure>
+      </div>
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/02-wizard.webp" alt="Asistente de tamaño y carne" loading="lazy">
+          <figcaption>Asistente de pedido</figcaption>
+        </figure>
+      </div>
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/03-resumen.webp" alt="Resumen de la comanda con total" loading="lazy">
+          <figcaption>Resumen con total</figcaption>
+        </figure>
+      </div>
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/04-cocina.webp" alt="Cocina con tickets en vivo" loading="lazy">
+          <figcaption>Ticket en vivo en cocina</figcaption>
+        </figure>
+      </div>
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/05-admin.webp" alt="Edición de precios y productos" loading="lazy">
+          <figcaption>Editar precios desde el móvil</figcaption>
+        </figure>
+      </div>
+      <div class="swiper-slide">
+        <figure class="tel">
+          <img src="assets/capturas/06-pin.webp" alt="Pantalla de PIN de la tienda" loading="lazy">
+          <figcaption>Acceso protegido por PIN</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+    <div class="swiper-pagination"></div>
+    <button class="galeria-flecha galeria-prev" type="button" aria-label="Captura anterior">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="galeria-flecha galeria-next" type="button" aria-label="Captura siguiente">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </div>
 </section>
 
@@ -430,7 +454,7 @@
   <p class="banner">Primer mes gratis · Sin permanencia · Sin comisión por pedido</p>
   <div class="grid3 precios reveal-grupo">
     <article class="card plan reveal">
-      <span class="plan-ico">📅</span>
+      <span class="plan-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
       <h3>Mensual</h3>
       <p class="precio">14,99 <span>€/mes</span></p>
       <ul>
@@ -442,7 +466,7 @@
     </article>
     <article class="card plan destacado reveal">
       <span class="etiqueta">⭐ Más ahorro</span>
-      <span class="plan-ico">🗓</span>
+      <span class="plan-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="m9 16 2 2 4-4"></path></svg></span>
       <h3>Anual</h3>
       <p class="precio">149,99 <span>€/año</span></p>
       <ul>
@@ -453,7 +477,7 @@
       <a class="btn btn-primario btn-ancho" data-plan="anual">💬 Elegir Anual</a>
     </article>
     <article class="card plan plan-dev reveal">
-      <span class="plan-ico">🛠</span>
+      <span class="plan-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>
       <h3>Desarrollo a medida</h3>
       <p class="plan-sub">¿La app no hace algo que necesitas? Monta tu presupuesto aproximado en 10 segundos:</p>
       <div class="calc" data-calc>
@@ -482,7 +506,7 @@
           <span data-calc-valor>Desde <strong data-calc-total>~30 €</strong> <small>aprox.</small></span>
         </p>
       </div>
-      <a class="btn btn-primario btn-ancho" data-dev-email>✉️ Pedir presupuesto</a>
+      <a class="btn btn-primario btn-ancho" data-dev-email><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg> Pedir presupuesto</a>
     </article>
   </div>
   <div class="incluye reveal">
@@ -649,12 +673,12 @@
   <p class="introduccion">Horario de atención: de <strong data-horario>10:00 a 20:00</strong>.</p>
   <div class="grid3 contacto reveal-grupo">
     <a class="card tarjeta-contacto reveal" data-email>
-      <div class="emoji">✉️</div>
+      <div class="emoji"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg></div>
       <h3>Email</h3>
       <p data-email-txt>komandiapp@gmail.com</p>
     </a>
     <a class="card tarjeta-contacto reveal" data-rrss="instagram">
-      <div class="emoji">📸</div>
+      <div class="emoji"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
       <h3>Instagram</h3>
       <p>@komandiapp</p>
     </a>
@@ -666,8 +690,8 @@
   <h2>Demo gratuita, pruébala cuando quieras</h2>
   <p>Es la app de verdad con un menú de ejemplo: sin registrarte, sin instalar nada y todas las veces que quieras.</p>
   <div class="ctas reveal-grupo">
-    <a class="btn btn-primario btn-lg reveal" data-demo>▶ Probar gratis</a>
-    <a class="btn btn-borde btn-lg reveal" data-email>✉️ Montar la mía</a>
+    <a class="btn btn-primario btn-lg reveal" data-demo><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> Probar gratis</a>
+    <a class="btn btn-borde btn-lg reveal" data-email><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg> Montar la mía</a>
   </div>
   <p class="nota">Cuando la pruebes, dime qué le falta a tu carta y te la monto. Primer mes gratis.</p>
 </section>
@@ -687,9 +711,10 @@
 </footer>
 
 <div class="cta-sticky" id="cta-sticky">
-  <a class="btn btn-primario btn-lg" data-demo>▶ Probar gratis</a>
+  <a class="btn btn-primario btn-lg" data-demo><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> Probar gratis</a>
 </div>
 
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

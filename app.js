@@ -162,6 +162,32 @@
     revealados.forEach(function (el) { el.classList.add('reveal-on'); });
   }
 
+  /* Galería: carrusel con Swiper (3 capturas en PC, 1 en móvil) */
+  var galeriaEl = document.querySelector('[data-galeria]');
+  if (window.Swiper && galeriaEl) {
+    var galeriaWrap = galeriaEl.parentElement;
+    var reduceMov = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    new Swiper(galeriaEl, {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      speed: 450,
+      loop: true,
+      grabCursor: true,
+      keyboard: { enabled: true },
+      pagination: { el: galeriaWrap.querySelector('.swiper-pagination'), clickable: true },
+      navigation: {
+        nextEl: galeriaWrap.querySelector('.galeria-next'),
+        prevEl: galeriaWrap.querySelector('.galeria-prev')
+      },
+      autoplay: reduceMov && reduceMov.matches
+        ? false
+        : { delay: 3200, disableOnInteraction: false, pauseOnMouseEnter: true },
+      breakpoints: {
+        760: { slidesPerView: 3, spaceBetween: 24 }
+      }
+    });
+  }
+
   /* CTA flotante: aparece tras bajar un poco */
   var sticky = document.getElementById('cta-sticky');
   if (sticky) {
@@ -178,25 +204,62 @@
     navigator.serviceWorker.register('sw.js').catch(function () {});
   }
 
-  /* FAQ: animación de apertura/cierre en ambos sentidos (max-height vía JS,
-   * funciona también en navegadores y WebViews antiguos) */
+  /* FAQ: animación de apertura/cierre en ambos sentidos y en CADA ciclo.
+   * No se usan transiciones CSS de max-height dentro de <details>: en los
+   * navegadores modernos la animación nativa del elemento las corta a mitad
+   * (el pliegue se quedaba a medias y el resto de ciclos saltaba). Se anima a
+   * mano con requestAnimationFrame fijando valores explícitos en px. */
+  var FAQ_DUR = 300;
+  var faqRaF = 0;
+  var tResize = 0;
+
+  function faqDetener(c) {
+    if (faqRaF) { cancelAnimationFrame(faqRaF); faqRaF = 0; }
+  }
+
+  function faqAjustar(c) {
+    c.style.maxHeight = c.scrollHeight + 'px';
+    void c.offsetHeight;
+  }
+
+  function faqAnimar(c, destino) {
+    faqDetener(c);
+    var scH = c.scrollHeight;                 /* altura natural del contenido */
+    var desde = Math.max(0, Math.min(scH, c.getBoundingClientRect().height));
+    var hasta = destino ? scH : 0;
+    c.style.maxHeight = desde + 'px';
+    void c.offsetHeight;
+    var inicio = performance.now();
+    function paso(now) {
+      var k = Math.min(1, (now - inicio) / FAQ_DUR);
+      var ease = 1 - Math.pow(1 - k, 3);      /* easeOutCubic */
+      var v = desde + (hasta - desde) * ease;
+      c.style.maxHeight = (Math.round(v * 100) / 100) + 'px';
+      faqRaF = k < 1 ? requestAnimationFrame(paso) : 0;
+    }
+    faqRaF = requestAnimationFrame(paso);
+  }
+
+  function faqReajustar() {
+    faqDetener(null);
+    document.querySelectorAll('#faq details[open]').forEach(function (od) {
+      var oc = od.querySelector('.faq-cuerpo');
+      if (oc) faqAjustar(oc);
+    });
+  }
+
   document.querySelectorAll('#faq details').forEach(function (d) {
     var c = d.querySelector('.faq-cuerpo');
     if (!c) return;
+    c.style.transition = 'none';
     c.style.maxHeight = d.open ? 'none' : '0px';
-    d.addEventListener('toggle', function () {
-      if (d.open) {
-        c.style.maxHeight = c.scrollHeight + 'px';
-        var fin = function () {
-          c.style.maxHeight = 'none';
-          c.removeEventListener('transitionend', fin);
-        };
-        c.addEventListener('transitionend', fin);
-      } else {
-        c.style.maxHeight = c.scrollHeight + 'px';
-        void c.offsetHeight;
-        c.style.maxHeight = '0px';
-      }
-    });
+    d.addEventListener('toggle', function () { faqAnimar(c, d.open); });
+  });
+
+  /* Si la ventana cambia de tamaño y el texto se repliega, las preguntas
+     abiertas se reajustan a su nueva altura sin cortarse. */
+  window.addEventListener('resize', function () {
+    clearTimeout(tResize);
+    tResize = setTimeout(faqReajustar, 150);
   });
 })();
