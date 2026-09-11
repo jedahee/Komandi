@@ -158,6 +158,17 @@ img { max-width: 100%; display: block; }
   .saltar:focus { top: .6rem; }
 }
 
+/* Cabecera en pantallas muy pequeñas (320px y menores): solo logo y botones compactos */
+@media (max-width: 360px) {
+  .cab { padding: .5rem .6rem; }
+  .brand #nombre-marca { display: none; }
+  .cab-ctas { gap: .3rem; }
+  .cab .btn {
+    padding: .42rem .5rem;
+    font-size: .78rem;
+  }
+}
+
 /* ---------- Hero ---------- */
 .hero {
   display: grid;
