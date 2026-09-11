@@ -186,6 +186,8 @@ img { max-width: 100%; display: block; }
   margin-bottom: .8rem;
 }
 
+.hero h1 .hero-marca { color: var(--principal2); }
+
 .hero .sub {
   font-size: clamp(1.05rem, 3.5vw, 1.3rem);
   color: var(--texto2);
