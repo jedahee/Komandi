@@ -23,7 +23,7 @@
   --texto-suave: #777;
   --principal: #e2541f;
   --principal2: #ff7a3d;
-  --en-marcha: var(--en-marcha);
+  --en-marcha: #ff9800;
   --peligro: #d6453d;
   --ok: #4caf7d;
   --sombra: rgba(0,0,0,.45);
@@ -223,9 +223,9 @@ button { font-family: inherit; color: inherit; background: none; border: none; c
 }
 .cp-swat {
   width: 30px; height: 30px; border-radius: 8px; cursor: pointer; border: 2px solid transparent;
-  background: var(--cp, #ccc); position: relative; padding: 0;
+  position: relative; padding: 0;
 }
-.cp-swat:hover { transform: scale(1.12); }
+.cp-swat:hover { transform: scale(1.12); border-color: rgba(255,255,255,.25); }
 .cp-swat[data-activo] { border-color: #fff; box-shadow: 0 0 0 2px var(--cp), 0 0 0 3.5px var(--texto2); }
 .cp-clear {
   grid-column: 1 / -1; width: 100%; margin-top: 2px; padding: 6px 10px; cursor: pointer;
@@ -241,12 +241,6 @@ button { font-family: inherit; color: inherit; background: none; border: none; c
     position: fixed; top: auto; left: 12px; right: 12px; bottom: 12px;
     width: auto; min-width: 0; max-width: none; z-index: 70; margin: 0;
   }
-}
-/* Badge de color en la cocina (mods) */
-.c-mod { display: inline-flex; align-items: center; gap: 5px; }
-.c-mod-color {
-  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-  background: var(--mc, #999); box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
 }
 .opc-agotado { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed var(--borde); background: transparent; transition: border-color .15s ease, background .15s ease; }
 .opc-agotado input { width: 0; height: 0; opacity: 0; position: absolute; }
@@ -278,6 +272,20 @@ button { font-family: inherit; color: inherit; background: none; border: none; c
   padding: 40px 20px;
   font-size: 15px;
 }
+/* Estado vacío de Repartos: tarjeta amable con emoji y sub-texto. */
+.rv-vacio {
+  grid-column: 1 / -1;
+  margin: 12px 0;
+  padding: 36px 20px;
+  text-align: center;
+  border: 1.5px dashed var(--borde);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(226,84,31,.06), rgba(226,84,31,.02));
+}
+.rv-emoji { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.rv-emoji svg { width: 40px; height: 40px; color: var(--principal2); }
+.rv-vacio b { display: block; font-size: 15px; font-weight: 800; color: var(--texto); margin-bottom: 5px; }
+.rv-vacio .rv-sub { display: block; font-size: 13px; color: var(--texto2); }
 .error {
   grid-column: 1 / -1;
   margin: 40px auto;
@@ -477,6 +485,17 @@ body.modo-repartos #productos { display: block; }
 .opcion .check { font-size: 16px; color: var(--texto2); }
 .opcion.seleccionada .check { color: var(--principal2); }
 .opcion-nombre { flex: 1; font-weight: 600; }
+.opc-dot {
+  display: inline-block;
+  vertical-align: -2px;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(243, 234, 217, .35);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.25), 0 1px 2px rgba(0,0,0,.4);
+  background: var(--borde);
+}
 .opcion-precio { font-size: 13px; color: var(--principal2); font-weight: 700; white-space: nowrap; }
 
 .ingredientes { display: flex; flex-direction: column; gap: 8px; }
@@ -565,6 +584,10 @@ body.modo-repartos #productos { display: block; }
 }
 @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
 #input-modal { z-index: 90; }
+/* La confirmación siempre por delante de los demás diálogos (usuario, cobro,
+   ficha… que comparten z-index y van después en el DOM). Los toasts van por
+   encima de todo. */
+#confirm-modal { z-index: 96; }
 
 .dialogo {
   position: relative;
@@ -609,15 +632,55 @@ body.modo-repartos #productos { display: block; }
   border-radius: var(--radio);
   padding: 12px;
 }
-.item-cabecera { display: flex; align-items: center; gap: 8px; }
-.item-nombre { flex: 1; font-size: 15px; font-weight: 700; }
+.item-cabecera { display: flex; align-items: center; gap: 10px; }
+.item-nombre { flex: 1; font-size: 17px; font-weight: 700; }
 .item-nombre small { color: var(--principal2); font-weight: 700; }
+.item-qty {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--superficie2);
+  border: 1px solid var(--borde);
+  color: var(--principal2);
+  font-size: 13.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
 .quitar { width: 40px; height: 40px; font-size: 14px; border-radius: 10px; background: var(--bg); }
 .editar { width: 40px; height: 40px; font-size: 14px; border-radius: 10px; background: var(--bg); color: var(--principal2); }
-.notas { margin-top: 6px; font-size: 12px; color: var(--texto2); line-height: 1.4; }
-.mods { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-.mod { display: flex; justify-content: space-between; font-size: 13px; }
-.mod span:last-child { color: var(--principal2); font-weight: 700; }
+.notas { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.nota-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto2);
+  background: var(--superficie2);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 4px 11px;
+  line-height: 1.35;
+}
+.mods { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.mod {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.35;
+  padding: 6px 11px;
+  background: var(--superficie2);
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+}
+.mod-n { font-weight: 600; color: var(--texto); }
+.mod-p { color: var(--principal2); font-weight: 800; white-space: nowrap; }
 .item-pie {
   margin-top: 10px;
   padding-top: 10px;
@@ -626,8 +689,8 @@ body.modo-repartos #productos { display: block; }
   align-items: center;
   justify-content: space-between;
 }
-.item-subtotal { font-size: 16px; font-weight: 800; }
-.item-subtotal small { display: block; font-size: 11px; color: var(--texto2); font-weight: 400; text-align: right; }
+.item-subtotal { font-size: 18px; font-weight: 800; white-space: nowrap; }
+.item-subtotal small { display: block; font-size: 12px; color: var(--texto2); font-weight: 400; text-align: right; margin-top: 2px; }
 
 .resumen-pie {
   padding: 14px;
@@ -754,6 +817,39 @@ body.modo-repartos #productos { display: block; }
   border-bottom: 1px solid var(--borde);
 }
 .stats-cabecera h2 { font-size: 17px; font-weight: 800; }
+.stats-titulo { min-width: 0; }
+.stats-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+/* Resumen en chips del encabezado de estadísticas (fecha · kpis · importe). */
+.cs {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--borde);
+  background: var(--superficie2);
+  color: var(--texto2);
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.cs.cs-kpi {
+  color: var(--principal2);
+  border-color: var(--principal);
+  background: rgba(226,84,31,.12);
+}
+.cs.cs-monto {
+  color: #fff;
+  border-color: var(--principal);
+  background: var(--principal);
+  box-shadow: 0 2px 8px rgba(226,84,31,.35);
+}
 .stats-cabecera-botones { display: flex; align-items: center; gap: 8px; }
 
 .stats-bar {
@@ -791,9 +887,30 @@ body.modo-repartos #productos { display: block; }
 }
 .stats-nav #stats-prev { padding: 0 0 1px 0; }
 .stats-nav #stats-next { padding: 0 0 1px 0; }
-.stats-fecha { min-width: 130px; max-width: 190px; text-align: center; padding: 4px 10px; }
-.stats-fecha strong { display: block; font-size: 15px; font-weight: 800; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.stats-fecha span { display: block; font-size: 12px; color: var(--principal2); font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats-fecha { min-width: 130px; text-align: center; padding: 4px 10px; position: relative; cursor: pointer; }
+.stats-fecha strong { display: block; font-size: 15px; font-weight: 800; line-height: 1.25; white-space: nowrap; }
+.stats-fecha span { display: block; font-size: 12px; color: var(--principal2); font-weight: 700; margin-top: 2px; white-space: nowrap; }
+/* El calendario va escondido sobre la fecha: al tocar la píldora del nav se
+   abre el selector nativo de fecha (móvil y PC). */
+.stats-fecha-cal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 0;
+  pointer-events: none;
+}
+@media (pointer: coarse) {
+  .stats-fecha-cal { pointer-events: auto; }
+}
+.stats-fecha.no-cal { cursor: default; }
+.stats-fecha.no-cal .stats-fecha-cal { pointer-events: none; }
+.stats-fecha:active strong { color: var(--principal2); }
 .stats-fecha-jump {
   display: inline-flex;
   align-items: center;
@@ -813,6 +930,7 @@ body.modo-repartos #productos { display: block; }
   font-weight: 700;
   outline: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   min-width: 0;
   width: 112px;
@@ -1009,13 +1127,34 @@ body.modo-repartos #productos { display: block; }
   transition: transform .2s ease;
 }
 .stats-plegable-toggle:not(.abierto) .chev { transform: rotate(-90deg); }
-/* En móvil los acordeones (filtros y resumen) arrancan replegados: el cuerpo se
-   oculta salvo que el botón tenga la clase .abierto. En pantalla grande quedan
-   abiertos por defecto. */
+/* El acordeón de fecha y navegación solo existe en móvil: en pantalla grande
+   la barra se ve siempre entera. */
+#stats-bar-toggle { display: none; }
+/* En móvil los acordeones (nav, filtros y resumen) arrancan replegados: el
+   cuerpo se oculta salvo que el botón tenga la clase .abierto. En pantalla
+   grande quedan abiertos por defecto. */
 @media (max-width: 700px) {
   .stats-plegable-toggle:not(.abierto) ~ .stats-filtros-cuerpo,
   .stats-plegable-toggle:not(.abierto) ~ .stats-resumen { display: none; }
+  /* La barra de fecha/navegación se integra con los otros acordeones: mismo
+     fondo, sin padding lateral (el botón ocupa el ancho completo) y el
+     contenido expandido con el mismo sangrado que los filtros. */
+  .stats-bar { padding: 0; background: var(--superficie); }
+  #stats-bar-toggle { display: flex; }
+  #stats-bar-toggle:not(.abierto) ~ .stats-nav,
+  #stats-bar-toggle:not(.abierto) ~ #stats-hoy,
+  #stats-bar-toggle:not(.abierto) ~ #stats-rango-toggle,
+  #stats-bar-toggle:not(.abierto) ~ .stats-acciones { display: none; }
+  #stats-bar-toggle.abierto ~ .stats-nav,
+  #stats-bar-toggle.abierto ~ #stats-hoy,
+  #stats-bar-toggle.abierto ~ #stats-rango-toggle,
+  #stats-bar-toggle.abierto ~ .stats-acciones { margin: 0 14px; }
+  #stats-bar-toggle.abierto ~ .stats-nav { margin-top: 10px; }
+  #stats-bar-toggle.abierto ~ .stats-acciones { margin-bottom: 10px; }
 }
+/* A 700px exactos coinciden max-width y min-width: en ese borde el botón se
+   mantiene oculto (la barra se ve completa, como en PC). */
+@media (min-width: 700px) { #stats-bar-toggle { display: none; } }
 .stats-filtros-row {
   display: flex;
   flex-wrap: wrap;
@@ -1077,16 +1216,79 @@ body.modo-repartos #productos { display: block; }
   padding: 7px 12px;
 }
 .stats-buscar .stats-buscar-ic { font-size: 14px; line-height: 1; pointer-events: none; flex: none; }
-.stats-buscar .inp { width: 100%; border: 0; background: transparent; padding: 0; }
-.stats-buscar .inp:focus { border: 0; outline: none; }
-.stats-dia-grupo { margin-bottom: 14px; }
-.stats-dia-titulo {
-  font-size: 12.5px;
-  font-weight: 800;
-  color: var(--principal2);
-  text-transform: capitalize;
-  margin-bottom: 6px;
+.stats-buscar .inp { width: 100%; border: 0; background: transparent; padding: 0; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+.stats-buscar .inp:focus { border: 0; outline: none; box-shadow: none; }
+.stats-buscar:focus-within { box-shadow: 0 0 0 2px var(--principal2); outline: none; }
+/* Día plegable en modo rango: cada día es un panel con su cabecera (chevron,
+   fecha, nº de comandas y total) que se expande/recoge. Vale en móvil y PC. */
+.stats-dia-grupo {
+  background: var(--superficie2);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
 }
+.stats-dia-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: var(--texto);
+}
+.stats-dia-titulo .chev {
+  font-size: 11px;
+  line-height: 1;
+  color: var(--principal2);
+  transition: transform .18s ease;
+  flex: none;
+}
+.stats-dia-grupo[data-cerrado] .stats-dia-titulo .chev { transform: rotate(-90deg); }
+.sdf-fecha {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sdf-fecha .sdf-rel { color: var(--principal2); }
+.sdf-num { flex: none; font-size: 12px; color: var(--texto2); font-weight: 700; white-space: nowrap; }
+.sdf-total { flex: none; font-size: 15px; font-weight: 800; color: var(--principal2); white-space: nowrap; }
+.stats-dia-grupo[data-cerrado] .stats-dia-cuerpo { display: none; }
+.stats-dia-cuerpo { padding: 0 12px 12px; }
+.stats-dia-cuerpo .stats-comandas-grid { margin-top: 12px; }
+
+/* Contador y acciones de las cabeceras de sección del historial. */
+.stats-seccion-cab { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.stats-seccion-cab h3 { margin-bottom: 0; }
+.stats-seccion-cont {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--texto2);
+  background: var(--bg);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 2px 9px;
+  line-height: 1.4;
+}
+.stats-seccion-acciones { margin-left: auto; display: flex; gap: 6px; }
+.stats-seccion-acciones .btn { margin: 0; padding: 5px 10px; font-size: 11.5px; }
+.stats-prods-box { margin-top: 8px; }
+/* Las comandas, en rejilla (móvil: 1 columna, mismo aspecto que hoy). */
+.stats-comandas-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.stats-comandas-grid .stats-comanda { margin-bottom: 0; }
 
 /* ---------- Selector de cliente en el resumen ---------- */
 .selector-cliente { position: relative; width: 100%; min-width: 0; }
@@ -1155,7 +1357,41 @@ body.modo-repartos #productos { display: block; }
 /* ---------- Pestaña Cobros ---------- */
 .cobros { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
 .cobros-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.cobros-estado { font-size: 12.5px; color: var(--texto2); }
+.cobros-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--borde);
+  background: var(--superficie2);
+}
+.cobros-mini .cm-count {
+  min-width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(226,84,31,.16);
+  color: var(--principal2);
+  font-weight: 900;
+  font-size: 13px;
+}
+.cobros-mini .cm-text { font-size: 12px; font-weight: 800; color: var(--texto2); }
+.cobros-mini .cm-total {
+  font-size: 14px;
+  font-weight: 900;
+  color: #fff;
+  background: var(--principal);
+  border-radius: 999px;
+  padding: 3px 10px;
+  box-shadow: 0 2px 8px rgba(226,84,31,.35);
+}
+@media (max-width: 420px) {
+  .cobros-cabecera { flex-wrap: wrap; }
+  .cobros-cabecera .cobros-mini { margin-left: auto; }
+}
 .cobros-subtabs { display: flex; gap: 8px; }
 .cobros-subtab {
   flex: 1;
@@ -1204,7 +1440,21 @@ body.modo-repartos #productos { display: block; }
 .cb-hora { flex: 1; font-size: 12px; color: var(--texto2); }
 .cb-total { font-size: 15px; font-weight: 800; color: var(--principal2); }
 .cb-linea { font-size: 13px; color: var(--texto2); }
-.cb-items { font-size: 12.5px; color: var(--texto2); line-height: 1.5; }
+.cb-items { display: flex; flex-direction: column; gap: 6px; }
+.cb-item {
+  background: var(--superficie2);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 7px 9px;
+}
+.cb-item-top { display: flex; align-items: baseline; gap: 8px; }
+.cb-qty { flex: none; color: var(--principal2); font-weight: 800; font-size: 14px; white-space: nowrap; }
+.cb-nombre { flex: 1; min-width: 0; font-weight: 700; font-size: 14.5px; color: var(--texto); overflow-wrap: anywhere; }
+.cb-sub { flex: none; font-weight: 800; font-size: 14.5px; color: var(--texto); white-space: nowrap; }
+.cb-mods { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; padding-left: 8px; border-left: 2px solid var(--borde); }
+.cb-mod { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--texto2); line-height: 1.4; }
+.cb-mod span:first-child { font-weight: 600; }
+.cb-mod-p { color: var(--principal2); font-weight: 700; white-space: nowrap; }
 
 .clientes-lista { display: flex; flex-direction: column; gap: 8px; }
 .cobros-buscador { margin-bottom: 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -1263,10 +1513,30 @@ body.modo-repartos #productos { display: block; }
   gap: 6px;
 }
 .cobro-num { font-size: 13px; font-weight: 700; color: var(--texto2); }
-.cobro-item-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
-.ci-cant { color: var(--principal2); font-weight: 800; }
-.ci-nombre { flex: 1; text-align: left; }
-.ci-sub { font-weight: 700; }
+.cobro-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  border-bottom: 1px dashed var(--borde);
+  padding-bottom: 8px;
+}
+.cobro-item-row:last-child { border-bottom: none; padding-bottom: 0; }
+.ci-cant { flex: none; color: var(--principal2); font-weight: 800; font-size: 14px; padding-top: 1px; }
+.ci-main { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; }
+.ci-nombre { font-weight: 700; font-size: 15px; color: var(--texto); overflow-wrap: anywhere; }
+.ci-extras {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 3px;
+  padding-left: 8px;
+  border-left: 2px solid var(--borde);
+}
+.ci-extra { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--texto2); line-height: 1.4; }
+.ci-extra span:first-child { font-weight: 600; }
+.ci-extra-p { color: var(--principal2); font-weight: 700; white-space: nowrap; }
+.ci-sub { flex: none; font-weight: 800; font-size: 14.5px; white-space: nowrap; }
 .cobro-total {
   border-top: 1px dashed var(--borde);
   padding-top: 8px;
@@ -1626,6 +1896,9 @@ body.modo-repartos #productos { display: block; }
   white-space: nowrap;
 }
 .cocina-estado.ok { color: var(--ok); border-color: var(--ok); }
+.cocina-cab-extra { display: flex; align-items: center; gap: 10px; }
+/* El reloj solo aporta en el tablero de PC (cocina); en móvil sobra. */
+.cocina-reloj { display: none; }
 
 .cocina-resumen { display: flex; gap: 8px; margin-bottom: 12px; }
 .chip-chip {
@@ -1643,75 +1916,259 @@ body.modo-repartos #productos { display: block; }
 
 .lista-comandas { display: flex; flex-direction: column; gap: 14px; }
 
+/* ==========================================================================
+   Tarjeta de comanda (cocina)
+   Estructura: cabecera con acento de estado · etiquetas · items · acciones
+   ========================================================================== */
 .c-card {
-  background: var(--superficie);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--superficie2) 0%, var(--superficie) 12%);
   border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  padding: 12px;
-  box-shadow: 0 2px 10px var(--sombra);
+  border-radius: 16px;
+  box-shadow: 0 3px 14px var(--sombra);
 }
-.c-card.c-pendiente { border-left: 4px solid var(--principal); }
-.c-card.c-haciendo { border-left: 4px solid var(--en-marcha); }
-.c-card.c-hecha { opacity: .65; }
-.c-top {
+/* Franja superior: color según estado (pendiente / en marcha / hecha) */
+.c-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--principal);
+}
+.c-card.c-haciendo::before { background: var(--en-marcha); }
+.c-card.c-hecha::before { background: var(--ok); }
+.c-card.c-pendiente { box-shadow: 0 3px 14px var(--sombra), inset 0 0 0 1px rgba(226,84,31,.22); }
+.c-card.c-hecha { opacity: .78; }
+
+.c-cab { padding: 14px 14px 10px; }
+.c-cab-fila {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .c-num {
   font-weight: 800;
-  font-size: 15px;
+  font-size: 17px;
   background: var(--principal);
   color: #fff;
-  padding: 3px 10px;
+  padding: 5px 13px;
   border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  letter-spacing: .3px;
 }
 .c-card.c-hecha .c-num { background: var(--ok); }
 .c-card.c-haciendo .c-num { background: var(--en-marcha); }
-.c-hora { flex: 1; font-size: 12px; color: var(--texto2); }
-.c-total { font-size: 17px; font-weight: 800; color: var(--principal2); }
+.c-hora { font-size: 13px; color: var(--texto2); font-weight: 700; white-space: nowrap; }
+.badge-hecha-mini, .badge-enmarcha-mini, .badge-pendiente-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1.5px solid;
+}
+.badge-hecha-mini { color: var(--ok); border-color: var(--ok); background: rgba(76,175,125,.12); }
+.badge-enmarcha-mini { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.12); }
+.badge-pendiente-mini { color: var(--principal2); border-color: var(--principal); background: rgba(226,84,31,.12); }
+
+.c-cab-fila2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.c-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.c-tags .c-tipo {
+  display: inline-flex !important;
+  margin-bottom: 0;
+}
+.c-cab-der {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.c-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--principal2);
+  white-space: nowrap;
+  letter-spacing: .3px;
+}
+.c-card.c-hecha .c-total { color: var(--ok); }
+
+.c-tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--superficie2);
+  border: 1.5px solid var(--borde);
+  color: var(--texto2);
+  margin-bottom: 8px;
+}
+.c-tipo.llevar { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.1); }
 
 .c-personas {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 8px;
+  margin: 0 14px 10px;
 }
 .c-personas span {
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
   background: var(--superficie2);
-  border: 1px solid var(--borde);
+  border: 1.5px solid var(--borde);
+  color: var(--texto2);
 }
-.c-personas .c-cajero { color: var(--principal2); }
+.c-personas .c-cajero { color: var(--principal2); border-color: var(--principal2); }
+.c-personas .c-cajero b { color: var(--texto); }
 .c-personas .c-cocinero { color: var(--en-marcha); border-color: var(--en-marcha); }
+.c-personas .c-cocinero b { color: var(--texto); }
 .c-cliente-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 11px;
   font-weight: 800;
-  color: var(--principal2, #f2b13d);
-  background: rgba(242, 177, 61, .12);
-  border: 1px solid var(--principal2, #f2b13d);
+  color: #42a5f5;
+  background: rgba(66,165,245,.12);
+  border: 1.5px solid #42a5f5;
   border-radius: 999px;
-  padding: 2px 10px;
-  margin-bottom: 8px;
-  margin-left: 4px;
+  padding: 4px 10px;
 }
-.c-tipo {
-  display: inline-block;
-  font-size: 11.5px;
+
+/* Cuerpo: items y mods */
+.c-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 14px;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+}
+.c-item {
+  position: relative;
+  padding: 10px 10px 10px 12px;
+}
+.c-item + .c-item { border-top: 1px dashed var(--borde); }
+.c-item-linea { display: flex; align-items: baseline; gap: 8px; }
+.c-item-cant {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px;
+  font-size: 13px;
   font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--superficie2);
-  border: 1px solid var(--borde);
-  color: var(--texto2);
-  margin-bottom: 8px;
+  color: var(--principal2);
+  background: rgba(226,84,31,.12);
+  border: 1.5px solid var(--principal);
+  border-radius: 8px;
+  white-space: nowrap;
 }
-.c-tipo.llevar { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.1); }
+.c-item-nombre { flex: 1; font-size: 15px; font-weight: 700; word-break: break-word; min-width: 0; }
+.c-item-precio { font-size: 14px; font-weight: 800; color: var(--texto2); white-space: nowrap; }
+.c-card .c-envio {
+  margin: 10px 14px 0;
+}
+.c-card .comanda-nota {
+  margin: 10px 14px 0;
+  padding: 8px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(242,177,61,.6);
+  border-left-width: 4px;
+  background: rgba(242,177,61,.14);
+  color: var(--texto);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.c-detalle { font-size: 12.5px; color: var(--texto2); line-height: 1.45; margin-top: 6px; font-style: italic; }
+.c-mods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.c-mod {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1.5px solid rgba(243, 234, 217, .32);
+  color: var(--texto);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  min-height: 28px;
+}
+/* Badge de color: el fondo ES el color del ingrediente, con tinta de alto contraste */
+.c-mod.tinta {
+  background: var(--mc, #999);
+  color: var(--mc-txt, #fff);
+  border-color: var(--mc, #999);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 1px 3px rgba(0,0,0,.3);
+  font-size: 13px;
+  padding: 4px 12px;
+  min-height: 28px;
+}
+.c-mod em { font-style: normal; color: var(--principal2, #f2b13d); font-weight: 800; white-space: nowrap; }
+.c-mod.tinta em { color: currentColor; opacity: .85; font-weight: 700; }
+
+/* Pie: botones de acción grandes y claros */
+.c-botones {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 14px;
+}
+.c-botones .btn {
+  flex: 1;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13.5px;
+  font-weight: 800;
+  border-radius: 12px;
+}
+.btn.en-marcha-activo { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.14); }
+.badge-hecha {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ok);
+  border: 1.5px solid var(--ok);
+  background: rgba(76,175,125,.1);
+}
 
 /* Editar comanda desde la cocina */
 .c-editar { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; font-size: 14px; }
@@ -1759,73 +2216,16 @@ body.modo-repartos #productos { display: block; }
 .sc-metodo { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; white-space: nowrap; line-height: 1; }
 .sc-metodo.efectivo { background: rgba(76,175,125,.15); color: var(--ok); }
 .sc-metodo.metodo-tarjeta { background: rgba(66,165,245,.15); color: #42a5f5; }
-.badge-hecha-mini { font-size: 12px; color: var(--ok); font-weight: 700; white-space: nowrap; }
-.badge-enmarcha-mini { font-size: 12px; color: var(--en-marcha); font-weight: 700; white-space: nowrap; }
-.c-items { display: flex; flex-direction: column; gap: 8px; }
-.comanda-nota {
-  margin: 6px 0;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border-left: 3px solid var(--principal2, #f2b13d);
-  background: rgba(242, 177, 61, .13);
-  color: var(--texto);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.35;
-  word-break: break-word;
-}
-.c-card .comanda-nota {
-  background: rgba(242, 177, 61, .22);
-  border: 1px solid rgba(242, 177, 61, .65);
-  border-left-width: 4px;
-  font-size: 14px;
-}
-.c-item { border-top: 1px dashed var(--borde); padding-top: 8px; }
-.c-item-linea { display: flex; align-items: baseline; gap: 8px; }
-.c-item-cant { font-size: 14px; font-weight: 800; color: var(--principal2); white-space: nowrap; }
-.c-item-nombre { flex: 1; font-size: 14px; font-weight: 700; }
-.c-item-precio { font-size: 14px; font-weight: 700; color: var(--texto2); white-space: nowrap; }
-.c-detalle { font-size: 12px; color: var(--texto2); line-height: 1.4; margin-top: 3px; }
-.c-mods { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-.c-mod {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: rgba(242, 177, 61, .16);
-  border: 1px solid rgba(242, 177, 61, .45);
-  color: var(--texto);
-  font-size: 11.5px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.c-mod em {
-  font-style: normal;
-  color: var(--principal2, #f2b13d);
-  font-weight: 800;
-  white-space: nowrap;
-}
-.c-botones { display: flex; gap: 8px; margin-top: 12px; }
-.c-botones .btn { flex: 1; }
-.btn.en-marcha-activo { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.12); }
-.badge-hecha {
-  flex: 1;
-  text-align: center;
-  padding: 11px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ok);
-  border: 1px solid var(--ok);
-}
 
 /* ---------- Pestaña Repartos (motoristas) ---------- */
 .repartos { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
 .repartos-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .repartos-estado { font-size: 12.5px; color: var(--texto2); }
+.repartos-bar { display: flex; flex-direction: column; gap: 8px; }
+.repartos-bar .repartos-resumen { margin-bottom: 0; }
+.repartos-bar .cocina-filtros { margin-bottom: 0; }
 .repartos-resumen { display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
-.chip-chip.cobros.con { color: #42a5f5; border-color: #42a5f5; background: rgba(66,165,245,.12); }
+.chip-chip.repartos-cobro.con { color: #42a5f5; border-color: #42a5f5; background: rgba(66,165,245,.12); }
 .lista-repartos { display: flex; flex-direction: column; gap: 10px; }
 .reparto-tarjeta {
   background: var(--superficie);
@@ -1850,9 +2250,9 @@ body.modo-repartos #productos { display: block; }
 .reparto-item-envio .sc-total { color: var(--texto2); }
 .reparto-pie { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .reparto-acciones { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
-.reparto-acciones .btn { flex: 1; min-width: 90px; white-space: nowrap; text-align: center; }
+.reparto-acciones .btn { flex: 1; min-width: 90px; white-space: nowrap; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .reparto-acciones-principales { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
-.reparto-acciones-principales .btn { flex: 1 1 100%; white-space: nowrap; text-align: center; }
+.reparto-acciones-principales .btn { flex: 1 1 100%; white-space: nowrap; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 
 /* ---------- Gestión de productos ---------- */
 .admin {
@@ -1878,6 +2278,15 @@ body.modo-repartos #productos { display: block; }
 .admin-cabecera h2 { font-size: 17px; font-weight: 800; }
 .admin-cabecera-botones { display: flex; align-items: center; gap: 8px; }
 .admin-cuerpo { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+.admin-cuerpo:has(.admin-cargando) { display: grid; place-items: center; align-content: center; }
+.admin-cargando {
+  font-size: 15px;
+  color: var(--texto2);
+  text-align: center;
+  padding: 40px 16px;
+  animation: parpadeo 1.2s ease-in-out infinite;
+}
+@keyframes parpadeo { 50% { opacity: .45; } }
 .admin-pie {
   display: flex;
   align-items: center;
@@ -2263,7 +2672,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .cobros-grupos .cobro-grupo { min-width: 0; }
   .clientes-lista { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .dialogo-cobro, .dialogo-ficha { width: min(520px, 92vw); }
-  .ficha-secciones { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ficha-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ficha-form .campo:nth-child(3) { grid-column: 1 / -1; }
   #resumen-modal, #json-modal {
     position: fixed;
     top: 50%;
@@ -2301,6 +2711,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .kanban-cuerpo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; min-width: 0; }
   .kanban-vacio { grid-column: 1 / -1; display: block; }
   .cocina-filtros .seg button { padding: 10px 12px; font-size: 13px; }
+  .c-cab { padding: 16px 16px 12px; }
+  .c-items { margin: 0 16px; }
+  .c-botones { padding: 12px 16px 16px; }
+  .c-card .comanda-nota, .c-card .c-envio { margin: 12px 16px 0; }
+  .c-num { font-size: 18px; }
+  .c-item-nombre { font-size: 16px; }
 
   /* --- Menú: tarjetas un poco más grandes --- */
   .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
@@ -2337,6 +2753,22 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .admin-prod-fila2 .inp-desc { flex: 1 1 100%; }
   .admin-prod-fila2 .admin-check.agotado-check { width: 100%; }
   .admin-prod-fila2 .admin-check.agotado-check .admin-check-txt small { display: block; }
+
+  /* --- Cocina: apriete en pantallas muy estrechas (<480px) --- */
+  .c-cab { padding: 12px 10px 8px; }
+  .c-items { margin: 0 10px; }
+  .c-botones { gap: 6px; padding: 10px 10px 12px; }
+  .c-botones .btn { font-size: 12.5px; padding: 8px 4px; }
+  .c-personas { margin-left: 10px; margin-right: 10px; }
+  .c-card .comanda-nota, .c-card .c-envio { margin-left: 10px; margin-right: 10px; }
+  .c-total { font-size: 16px; }
+  .c-num { font-size: 15.5px; padding: 4px 11px; }
+  .c-item-nombre { font-size: 14px; }
+  .c-item-cant { min-width: 24px; height: 24px; }
+  .c-mod, .c-mod.tinta { font-size: 12px; padding: 3px 9px; min-height: 24px; }
+  .badge-hecha-mini, .badge-enmarcha-mini, .badge-pendiente-mini { font-size: 10.5px; padding: 3px 8px; }
+  .c-hora { font-size: 12px; }
+  .c-personas span { font-size: 12px; padding: 4px 9px; }
 }
 
 /* ==========================================================================
@@ -2346,13 +2778,22 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
    ========================================================================== */
 @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
 
-  /* --- Estructura: cabecera arriba, categorías a la izquierda (estilo POS) --- */
+  /* ================================================================
+     Shell POS de escritorio (solo pantallas grandes con ratón:
+     tablet y táctiles conservan el layout móvil).
+     Pantalla fija sin scroll de página: cabecera arriba, barra
+     lateral izquierda (categorías + secciones), carta con scroll
+     propio y barra total anclada bajo la carta.
+     ================================================================ */
   body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 250px 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-columns: 240px 1fr;
   }
-  #cabecera { grid-column: 1 / -1; padding: 14px 32px; }
+  #cabecera { grid-column: 1 / -1; padding: 12px 28px; }
   #cabecera .logo { font-size: 32px; }
   #cabecera .logo svg { width: 38px; height: 38px; }
   #cabecera h1 { font-size: 22px; }
@@ -2368,19 +2809,21 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   }
   #btn-usuario .u-nombre { display: inline; margin-left: 6px; }
 
+  /* --- Barra lateral: categorías con scroll, bajo la cabecera --- */
   #categorias {
     grid-row: 2;
     grid-column: 1;
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-    padding: 18px 14px;
+    padding: 18px 12px;
     overflow-y: auto;
     border-bottom: none;
     border-right: 1px solid var(--borde);
     background: #1a120d;
   }
   .tab {
+    flex: 0 0 auto;
     width: 100%;
     padding: 13px 16px;
     border-radius: 12px;
@@ -2390,14 +2833,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   }
   .tab:hover:not(.activa) { background: var(--superficie2); color: var(--texto); border-color: var(--principal); transform: translateX(2px); }
 
-  #productos { grid-row: 2; grid-column: 2; min-height: 0; }
-  #barra-total { grid-column: 1; padding: 12px 20px; flex-wrap: wrap; }
-  #barra-total .acciones { flex-wrap: wrap; }
-  #barra-total .acciones .btn { white-space: nowrap; }
-
-  /* --- Carta: grid a todo el ancho del área de contenido --- */
+  /* --- Zona de carta: grid a todo el ancho del área --- */
+  #productos { grid-row: 2 / 4; grid-column: 2; min-height: 0; min-width: 0; }
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 18px;
     padding: 28px;
   }
@@ -2414,8 +2853,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .tarjeta-precio { font-size: 17px; }
   .mas, .flecha { font-size: 18px; }
 
-  /* --- Barra total --- */
-  #total { font-size: 32px; }
+  /* --- Barra total, ancha bajo la carta (columna derecha) --- */
+  #barra-total {
+    grid-row: 4;
+    grid-column: 2;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 28px;
+  }
+  #total { font-size: 28px; }
   #num-productos { font-size: 13px; }
   .acciones .btn { font-size: 15px; padding: 12px 22px; }
 
@@ -2483,6 +2929,44 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .quitar:hover { background: rgba(214,69,61,.14); border-color: var(--peligro); }
   .editar:hover { background: rgba(226,84,31,.14); border-color: var(--principal); }
 
+  /* --- Resumen de comanda en PC: listado amplio + panel lateral con los
+     datos del pedido, total y acciones. En modo edición y con comandas
+     largas, cada zona rueda por separado. Móvil no se toca. --- */
+  #resumen-modal {
+    width: min(960px, calc(100vw - 56px));
+    height: min(88vh, 820px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  #resumen-modal .modal-cabecera { grid-column: 1 / -1; grid-row: 1; }
+  #resumen-modal .resumen-items {
+    grid-column: 1; grid-row: 2;
+    min-width: 0;
+    padding: 18px 22px;
+    gap: 14px;
+  }
+  #resumen-modal .resumen-pie {
+    grid-column: 2; grid-row: 2;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    border-top: none;
+    border-left: 1px solid var(--borde);
+    background: var(--superficie);
+    padding: 18px;
+  }
+  #resumen-modal .item {
+    padding: 16px 18px;
+    border-radius: 14px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  #resumen-modal .item:hover { border-color: var(--principal); background: var(--superficie2); }
+  #resumen-modal .item-nombre { font-size: 18px; }
+  #resumen-modal .item-subtotal { font-size: 21px; }
+  #resumen-modal .total-grande span:last-child { font-size: 34px; }
+  #resumen-modal .tipo-pedido .seg button { padding: 11px 12px; }
+
   /* --- Admin: diálogo amplio con categorías en columnas --- */
   .admin {
     top: 50%;
@@ -2514,70 +2998,287 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .inp:hover { border-color: var(--principal); }
   .inp:focus { box-shadow: 0 0 0 3px rgba(226,84,31,.18); }
 
-  /* --- Estadísticas: diálogo con dos columnas (productos | comandas) --- */
+  /* --- Estadísticas: diálogo amplio con dos columnas (productos | comandas) --- */
   .stats {
     top: 50%;
     left: 50%;
     right: auto;
     bottom: auto;
     transform: translate(-50%, -50%);
-    width: min(900px, calc(100vw - 48px));
-    height: min(88vh, 860px);
-    border-radius: 22px;
+    width: min(1280px, calc(100vw - 48px));
+    height: min(90vh, 900px);
+    border-radius: 24px;
     border: 1px solid var(--borde);
     box-shadow: 0 30px 80px rgba(0,0,0,.6);
     animation: modal-pc .22s ease;
   }
-  .stats-cabecera { padding: 18px 22px; }
-  .stats-nav { padding: 12px 22px; }
-  .stats-resumen { padding: 14px 22px; }
-  .stats-cuerpo { padding: 18px 22px; min-height: 0; }
-
-  /* --- Cocina: tablero a todo el ancho, comandas por secciones --- */
-  .cocina { padding: 28px; }
-  .cocina-cabecera { margin-bottom: 16px; }
-  .cocina-cabecera .paso-titulo { font-size: 24px; }
-  .cocina-estado { font-size: 13px; padding: 6px 12px; }
-  .cocina-resumen { gap: 10px; margin-bottom: 16px; }
-  .lista-comandas {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+  .stats-cabecera {
+    padding: 20px 26px;
+    position: relative;
+  }
+  .stats-cabecera::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--principal), rgba(226,84,31,.12));
+  }
+  .stats-cabecera h2 { font-size: 20px; }
+  .stats-titulo { display: block; }
+  .stats-sub { display: flex; gap: 8px; margin-top: 10px; font-size: 12.5px; }
+  .stats-sub .cs { padding: 5px 14px; font-size: 12.5px; }
+  .stats-cabecera .icon-btn { width: 42px; height: 42px; font-size: 17px; }
+  .stats-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 26px 14px;
+  }
+  .stats-nav { padding: 12px 20px; gap: 8px; width: 450px; }
+  .stats-nav #stats-prev, .stats-nav #stats-next { width: 46px; height: 46px; font-size: 24px; }
+  .stats-nav .icon-btn:disabled { opacity: .35; }
+  /* Ancho fijo en PC: el nav se queda igual en modo día que en rango. La fecha
+     rellena el hueco y no es interactiva en rango (ahí ya está el filtro). */
+  .stats-fecha {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 6px 14px;
+    border-radius: 10px;
+    transition: background .15s ease;
+  }
+  .stats-fecha:hover:not(.no-cal) { background: var(--superficie2); }
+  .stats-fecha strong { font-size: 16.5px; }
+  .stats-fecha span { font-size: 12.5px; }
+  .btn-rango {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: center;
+    margin-left: 0;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .stats-acciones {
+    flex: none;
+    flex-direction: row;
+    margin-left: auto;
+    gap: 8px;
+  }
+  .stats-acciones .btn {
+    width: auto;
+    flex: none;
+    height: 44px;
+    min-width: 210px;
+    padding: 0 20px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .stats-resumen { padding: 14px 26px; }
+  .stats-tarjeta { padding: 14px 16px; }
+  .stats-tarjeta strong { font-size: 26px; }
+  .stats-tarjeta.total strong { font-size: 28px; }
+  .stats-cuerpo {
+    padding: 20px 26px;
+    min-height: 0;
+    gap: 24px;
+    grid-template-columns: 3fr 7fr;
     align-items: start;
   }
-  .kanban-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .stats-seccion-cab h3 { font-size: 13.5px; }
+  /* Productos: columna única (~30% del ancho). */
+  .stats-prods-box {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+  .stats-prods-box .stats-prod { margin-bottom: 0; min-width: 0; }
+  /* Comandas: 2 columnas (2 comandas por fila) en el 70% restante. */
+  .stats-comandas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .stats-dia-grupo { margin-bottom: 14px; }
+  .stats-dia-titulo { padding: 14px 18px; }
+  .stats-dia-titulo:hover { background: rgba(226,84,31,.06); }
+  .sdf-fecha { font-size: 15px; }
+  .sdf-num { font-size: 13px; }
+  .sdf-total { font-size: 16px; }
+  .stats-dia-cuerpo { padding: 0 14px 14px; }
+  .stats-dia-cuerpo .stats-comandas-grid { margin-top: 14px; }
+  .stats-seccion-acciones .btn { padding: 6px 12px; font-size: 12px; }
+  .stats-seccion-acciones .btn:hover { border-color: var(--principal); }
+
+   /* --- Cocina en PC: tablero inmersivo a pantalla completa ---
+      La carta rueda por dentro (no el contenedor) y el tablero ocupa todo
+      el alto disponible con tres columnas independientes. */
+  body.modo-cocina #productos {
+    overflow: hidden;
+    /* Cubrir filas 2-4 (hasta el fondo del viewport); #barra-total (row4 col2)
+       queda debajo pero está display:none en modo-cocina. */
+    grid-row: 2 / 5;
+  }
+  .cocina {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100%;
+    min-height: 0;
+    padding: 28px;
+  }
+  .cocina-cabecera { margin-bottom: 0; }
+  .cocina-cabecera .paso-titulo { font-size: 24px; }
+  .cocina-reloj {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--texto2);
+    background: var(--superficie2);
+    border: 1px solid var(--borde);
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .cocina-estado { font-size: 13px; padding: 6px 12px; }
+
+  /* Barra de herramientas: contadores + filtros en una sola fila */
+  .cocina-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .cocina-resumen { margin-bottom: 0; }
+  .cocina-filtros {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+  .cocina-filtros .seg button { padding: 10px 16px; font-size: 13.5px; }
+  .cocina-filtro-persona { width: 230px; align-self: stretch; }
+  .cocina-filtro-persona .inp-persona { width: 100%; height: 100%; font-size: 13.5px; }
+
+  /* Tablero: columnas que ruedan por dentro, mismo alto */
+  .lista-comandas {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+  }
+  .kanban-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    overflow: hidden;
+  }
   .kanban-h {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 15px;
+    font-size: 15.5px;
     font-weight: 800;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: var(--superficie2);
-    border: 1px solid var(--borde);
+    letter-spacing: .3px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--borde);
+    border-radius: 0;
+    background: transparent;
   }
-  .kanban-pend .kanban-h { color: var(--principal2); border-color: var(--principal); background: rgba(226,84,31,.1); }
-  .kanban-marcha .kanban-h { color: var(--en-marcha); border-color: var(--en-marcha); background: rgba(255,152,0,.1); }
-  .kanban-hechas .kanban-h { color: var(--ok); border-color: var(--ok); background: rgba(76,175,125,.1); }
-  .kanban-cuerpo { display: flex; flex-direction: column; gap: 12px; }
+  .kanban-pend .kanban-h { color: var(--principal2); border-color: var(--borde); background: rgba(226,84,31,.08); }
+  .kanban-marcha .kanban-h { color: var(--en-marcha); border-color: var(--borde); background: rgba(255,152,0,.08); }
+  .kanban-hechas .kanban-h { color: var(--ok); border-color: var(--borde); background: rgba(76,175,125,.08); }
+  .kanban-cuerpo {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+  /* Las tarjetas conservan su alto natural: nunca se comprimen aunque no
+     quepan, la columna rueda por dentro para verlas todas. */
+  .kanban-cuerpo > .c-card { flex-shrink: 0; }
+
+  /* Filtro de un solo estado (PC): las comandas en rejilla, varias por fila,
+     en vez de apiladas una debajo de otra. */
+  .lista-comandas.lista-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-auto-rows: minmax(min-content, max-content);
+    align-content: start;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 12px;
+  }
+  .lista-comandas.lista-grid .kanban-col,
+  .lista-comandas.lista-grid .kanban-cuerpo { display: contents; }
+  .lista-comandas.lista-grid .kanban-h {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15.5px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--borde);
+    border-radius: 12px;
+    color: var(--principal2);
+    background: rgba(226,84,31,.08);
+    width: fit-content;
+    margin-bottom: 2px;
+  }
+  .lista-comandas.lista-grid .kanban-pend .kanban-h { color: var(--principal2); background: rgba(226,84,31,.08); }
+  .lista-comandas.lista-grid .kanban-marcha .kanban-h { color: var(--en-marcha); background: rgba(255,152,0,.08); }
+  .lista-comandas.lista-grid .kanban-hechas .kanban-h { color: var(--ok); background: rgba(76,175,125,.08); }
+  .lista-comandas.lista-grid .kanban-vacio,
+  .lista-comandas.lista-grid .kanban-mas,
+  .lista-comandas.lista-grid > .vacio { grid-column: 1 / -1; }
   .kanban-vacio {
     display: block;
+    flex: 1;
     border: 1px dashed var(--borde);
-    border-radius: var(--radio);
+    border-radius: 12px;
     color: var(--texto2);
     font-size: 13px;
     text-align: center;
-    padding: 24px 12px;
+    padding: 28px 12px;
   }
   .c-card { transition: transform .16s ease, box-shadow .2s ease, border-color .18s ease; }
   .c-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px var(--sombra); }
   .c-card.c-hecha:hover { border-color: var(--ok); }
+  .c-card.c-haciendo:hover { border-color: var(--en-marcha); }
+  .c-card.c-pendiente:hover { border-color: var(--principal); }
+  .c-cab { padding: 18px 18px 14px; }
+  .c-items { margin: 0 18px; }
+  .c-botones { padding: 14px 18px 18px; }
+  .c-botones .btn { min-height: 52px; font-size: 15px; }
+  .c-card .comanda-nota, .c-card .c-envio { margin: 12px 18px 0; }
+  .c-num { font-size: 19px; padding: 6px 15px; }
+  .c-item-nombre { font-size: 16.5px; }
+  .c-item-precio, .c-item-cant { font-size: 16px; }
+  .c-item-cant { height: 28px; min-width: 28px; }
+  .c-total { font-size: 20px; }
+  .c-mod { font-size: 13px; min-height: 27px; }
+  .c-mod.tinta { font-size: 13.5px; min-height: 29px; }
 
   /* --- Cobros y clientes en PC: 2 columnas, más aire --- */
   .cobros { padding: 28px; max-width: 1200px; width: 100%; margin: 0 auto; }
   .cobros-cabecera .paso-titulo { font-size: 24px; }
-  .cobros-estado { font-size: 14px; }
+  .cobros-mini { padding: 7px 14px; gap: 10px; }
+  .cobros-mini .cm-text { font-size: 13px; }
+  .cobros-mini .cm-total { font-size: 15px; }
+  .rv-vacio { padding: 46px 20px; }
+  .rv-emoji svg { width: 48px; height: 48px; }
+  .rv-vacio b { font-size: 17px; }
   .cobros-grupos { grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .cobro-card { padding: 14px; }
   .clientes-lista { grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -2588,36 +3289,70 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .stats-rango-campos .stats-fecha-jump { flex: none; }
   .stats-rango-campos .stats-fecha-jump input[type="date"] { flex: none; width: 150px; }
   .stats-nav .stats-fecha-ir { margin-left: auto; }
-  .dialogo-cobro, .dialogo-ficha { width: min(560px, 92vw); }
+  .dialogo-cobro { width: min(560px, 92vw); }
+  .dialogo-ficha { width: min(780px, 92vw); }
+  .ficha-botones { justify-content: flex-end; }
+  .ficha-botones .btn { flex: 0 0 auto; padding: 10px 20px; }
 
   /* --- Accesibilidad y scrollbars --- */
   #categorias, #productos, .admin-cuerpo, .resumen-items, .sidebar .pasos, .json-texto { scrollbar-width: thin; scrollbar-color: var(--borde) transparent; }
   #categorias::-webkit-scrollbar, #productos::-webkit-scrollbar, .admin-cuerpo::-webkit-scrollbar, .resumen-items::-webkit-scrollbar, .sidebar .pasos::-webkit-scrollbar, .json-texto::-webkit-scrollbar { width: 10px; }
   #categorias::-webkit-scrollbar-thumb, #productos::-webkit-scrollbar-thumb, .admin-cuerpo::-webkit-scrollbar-thumb, .resumen-items::-webkit-scrollbar-thumb, .sidebar .pasos::-webkit-scrollbar-thumb, .json-texto::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 999px; }
 
-  /* --- Repartos en PC: tarjetas a 3 columnas, más aire --- */
+  /* --- Repartos en PC: cabecera, barra de filtros con panel y tarjetas a 3 columnas --- */
   .repartos { padding: 28px; max-width: 1400px; width: 100%; margin: 0 auto; }
   .repartos-cabecera .paso-titulo { font-size: 24px; }
-  .repartos-estado { font-size: 14px; }
+  .repartos-estado {
+    font-size: 13px;
+    color: var(--texto2);
+    background: var(--superficie2);
+    border: 1px solid var(--borde);
+    padding: 7px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .repartos-bar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+  }
+  .repartos-bar .repartos-resumen { margin-bottom: 0; }
   .lista-repartos { grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .reparto-tarjeta { padding: 14px; transition: transform .16s ease, box-shadow .2s ease, border-color .18s ease; }
   .reparto-tarjeta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px var(--sombra); }
+  .reparto-acciones-principales .btn { flex: 1; min-width: 120px; }
 
-  /* --- Navegación inferior anclada al pie del grid (junto a la barra total) --- */
+  /* --- Navegación de secciones al pie de la barra lateral (izquierda) --- */
   #navegacion {
-    grid-row: 3;
-    grid-column: 2;
-    padding: 0 20px;
-    align-items: center;
-    border-top: none;
-    border-left: 1px solid var(--borde);
+    grid-row: 3 / 5;
+    grid-column: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 6px;
+    padding: 12px;
+    border-top: 1px solid var(--borde);
+    background: #1a120d;
   }
-  /* Cuando la barra total está oculta (cocina/cobros/repartos) la navegación
-     ocupa toda la fila inferior. */
-  body.modo-cocina #navegacion, body.modo-cobros #navegacion, body.modo-repartos #navegacion { grid-column: 1 / -1; border-left: none; }
-  .nav-item { flex-direction: row; gap: 8px; padding: 12px 16px; font-size: 13px; }
+  .nav-item {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    border-radius: 12px;
+  }
+  .nav-item:hover { background: var(--superficie2); color: var(--texto); }
   .nav-item.activo::after { display: none; }
-  .nav-item.activo { background: rgba(226,84,31,.12); border-radius: 12px; }
+  .nav-item.activo { background: rgba(226,84,31,.12); color: var(--principal2); border-radius: 12px; }
   .nav-item .nav-icono { font-size: 18px; }
 
   /* --- Pantalla de PIN en escritorio: tarjeta con backdrop --- */
@@ -2946,25 +3681,26 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 <div id="stats-fondo" class="fondo oculto"></div>
 <div id="stats" class="stats oculto" aria-hidden="true">
   <div class="stats-cabecera">
-    <h2>📊 Estadísticas e historial</h2>
+    <div class="stats-titulo">
+      <h2>📊 Estadísticas e historial</h2>
+      <p id="stats-sub" class="stats-sub">—</p>
+    </div>
     <div class="stats-cabecera-botones">
       <button id="stats-cerrar" class="icon-btn" aria-label="Cerrar">✕</button>
     </div>
   </div>
   <div class="stats-bar">
+    <button id="stats-bar-toggle" class="stats-plegable-toggle" aria-expanded="false">📅 Fecha y navegación <span class="chev" aria-hidden="true">▾</span></button>
     <div class="stats-nav">
       <button id="stats-prev" class="icon-btn" aria-label="Día anterior">‹</button>
-      <div class="stats-fecha">
+      <div class="stats-fecha" id="stats-fecha-btn" title="Elegir fecha">
         <strong id="stats-fecha-txt">—</strong>
         <span id="stats-fecha-sub"></span>
+        <input id="stats-fecha-ir" type="date" class="stats-fecha-cal" aria-label="Elegir fecha" tabindex="-1">
       </div>
       <button id="stats-next" class="icon-btn" aria-label="Día siguiente">›</button>
     </div>
     <button id="stats-hoy" class="btn btn-secundario btn-mini">Hoy</button>
-    <label id="stats-fecha-jump" class="stats-fecha-jump" title="Ir a una fecha">
-      <span class="stats-fecha-jump-ic" aria-hidden="true">📅</span>
-      <input id="stats-fecha-ir" type="date" aria-label="Ir a una fecha">
-    </label>
     <button id="stats-rango-toggle" class="btn-rango" aria-expanded="false">📅 Rango <span class="chev" aria-hidden="true">▾</span></button>
     <div class="stats-acciones">
       <button id="stats-exportar-csv" class="btn btn-secundario">⬇️ Descargar Excel/CSV</button>
@@ -3055,7 +3791,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 
 /* Datos incrustados. build.js los inyecta al generar el archivo único para compartir.
    Si es null, la app intenta cargar productos.json por red. */
-const EMBEDDED_DATA = {"config":{"nombre":"Komandi","subtitulo":"Cuentas de comanda","moneda":"€","direccion":"Calle de ejemplo, 123","cif":"","iva":21,"envio":{"activo":true,"coste":1,"direccion":{"modo":"auto","cp":"Sevilla, Cantillana","pais":"España"}},"funciones":{"cobros":true,"cobroIndividual":true,"sonidoCocina":true,"propinas":true},"paginasProtegidas":{"historial":true,"cobros":true},"email":{"activado":true,"desde":"demo@komandi.es","host":"smtp.gmail.com","puerto":587,"seguridad":"starttls","usuario":"","clave":"","inseguro":false,"claveGuardada":false},"usuarios":[{"nombre":"Admin","historial":true,"cobros":true},{"nombre":"Ana","historial":true,"cobros":true},{"nombre":"Carlos","historial":true,"cobros":false}],"tema":{"principal":"#e2541f","bg":"#16100d","superficie":"#221813","texto":"#f3ead9","destacado":"#ff7a3d"}},"categorias":[{"id":"menus","nombre":"Menús","icono":"🍔","productos":[{"id":"menu-hamburguesa","nombre":"Menú Hamburguesa","descripcion":"Hamburguesa + patatas + bebida","imagen":"🍔","precio":4.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147541-1","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147542-2","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147542-3","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785759948618-1","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Extra salsa dentro","precio":0,"opciones":[{"id":"sub0","nombre":"Blanca","precio":0},{"id":"sub1","nombre":"Roja","precio":0},{"id":"sub2","nombre":"Picante","precio":0},{"id":"sub3","nombre":"Kétchup","precio":0},{"id":"sub4","nombre":"Mayonesa","precio":0}]},{"id":"ext1","nombre":"Salsa aparte en tarro","precio":0.49,"opciones":[{"id":"sub0","nombre":"Blanca","precio":0.5},{"id":"sub1","nombre":"Roja","precio":0.5},{"id":"sub2","nombre":"Picante","precio":0.5},{"id":"sub3","nombre":"Kétchup","precio":0.5},{"id":"sub4","nombre":"Mayonesa","precio":0.5}]},{"id":"ext2","nombre":"Salsa aparte en vaso","precio":2.99,"opciones":[{"id":"sub0","nombre":"Blanca","precio":3},{"id":"sub1","nombre":"Roja","precio":3},{"id":"sub2","nombre":"Picante","precio":3},{"id":"sub3","nombre":"Kétchup","precio":3},{"id":"sub4","nombre":"Mayonesa","precio":3}]}]}]},{"id":"menu-nuggets","nombre":"Menú Nuggets","descripcion":"Nuggets + patatas + bebida","imagen":"🍗","precio":4.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147542-5","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147542-6","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147542-7","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-perrito","nombre":"Menú Perrito Caliente","descripcion":"Perrito caliente + patatas + bebida","imagen":"🌭","precio":4.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147542-8","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pan normal","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147542-9","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Salchicha","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147542-10","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-11","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-12","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-kebab","nombre":"Menú Kebab","descripcion":"Kebab pollo, ternera o mixto + patatas + bebida","imagen":"🥙","precio":6.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147543-13","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-14","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pan de pita","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147543-15","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-16","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-17","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-18","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-durum","nombre":"Menú Dürum","descripcion":"Dürum pollo, ternera o mixto + patatas + bebida","imagen":"🌯","precio":6.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147543-19","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-20","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Dürum normal","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147543-21","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-22","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-23","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-24","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-pizza-turca","nombre":"Menú Pizza Turca","descripcion":"Pizza Turca pollo, ternera o mixto + patatas + bebida","imagen":"🍕","precio":7.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147543-25","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-26","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-27","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-28","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-29","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-alitas","nombre":"Menú Alitas de Pollo","descripcion":"Alitas de pollo + patatas + bebida","imagen":"🍗","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147543-30","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-31","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-32","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-falafel","nombre":"Menú Falafel","descripcion":"Falafel dürum o pita + patatas + bebida","imagen":"🧆","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-33","titulo":"Presentación","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Dürum","precio":0},{"id":"op1","nombre":"Pita","precio":0}]},{"id":"paso1785720147544-34","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147544-35","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-36","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-plato-sultan","nombre":"Menú Plato Sultán","descripcion":"Plato Sultán + patatas + bebida","imagen":"🍚","precio":7.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-37","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147544-38","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Arroz","precio":0},{"id":"op2","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-39","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-40","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-plato-especial-arroz","nombre":"Menú Plato Especial con Arroz","descripcion":"Plato especial con arroz + bebida","imagen":"🍚","precio":8.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-41","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147544-42","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Arroz","precio":0},{"id":"op1","nombre":"Patatas","precio":0},{"id":"op2","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-43","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-44","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-pareja","nombre":"Menú Pareja","descripcion":"Kebab + Dürum + patatas + 2 bebidas","imagen":"🥙","precio":12.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-45","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-46","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"prod1785721967704-3","nombre":"Menú Durum Tiras","descripcion":"Durum de tiras de pollo con patatas y bebida","imagen":"🌯","precio":7.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785722052134-4","titulo":"Patatas dentro","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Tiras de pollo","precio":0},{"id":"op1","nombre":"Lechuga","precio":0},{"id":"op2","nombre":"Tomate","precio":0},{"id":"op3","nombre":"Cebolla","precio":0},{"id":"op4","nombre":"Zanahoria","precio":0},{"id":"op5","nombre":"Maíz","precio":0},{"id":"op6","nombre":"Patatas dentro","precio":0.99}]}]}]},{"id":"pita-kebab","nombre":"Pita Kebab","icono":"🥙","productos":[{"id":"kebab-base","nombre":"Kebab pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🥙","precio":4.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-47","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"kebab-queso","nombre":"Kebab con queso","descripcion":"Pollo, ternera o mixto con ensalada, salsas y queso","imagen":"🥙","precio":4.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-48","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"kebab-solo-carne","nombre":"Kebab solo carne","descripcion":"Carne o mixto con salsas","imagen":"🥙","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147544-49","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]}]},{"id":"durum-kebab","nombre":"Dürum Kebab","icono":"🌯","productos":[{"id":"durum-base","nombre":"Dürum pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🌯","precio":4.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-50","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-solo-carne","nombre":"Dürum solo carne","descripcion":"Carne o mixto con ensalada y salsas","imagen":"🌯","precio":5.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-51","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-queso","nombre":"Dürum con queso","descripcion":"Pollo, ternera o mixto con ensalada, salsas y queso","imagen":"🌯","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-52","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-nuggets","nombre":"Dürum de Nuggets","descripcion":"Rollo de nuggets","imagen":"🌯","precio":3.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-53","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-tiras-pollo","nombre":"Dürum de Tiras de Pollo","descripcion":"Rollo de tiras de pollo","imagen":"🌯","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-54","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-falafel","nombre":"Dürum Falafel","descripcion":"Falafel, dürum o pita","imagen":"🧆","precio":4.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-55","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"prod1785778965468-1","nombre":"Durum Solo Carne Fino","imagen":"🌯","precio":4.99,"agotado":false}]},{"id":"pizza-turca","nombre":"Pizza Turca","icono":"🍕","productos":[{"id":"pizza-turca-base","nombre":"Pizza Turca pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🍕","precio":5.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-56","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"pizza-turca-solo-carne","nombre":"Pizza Turca solo carne","descripcion":"Rollo solo carne o mixto con salsas","imagen":"🍕","precio":6.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-57","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"pizza-turca-queso","nombre":"Pizza Turca con queso","descripcion":"Rollo con carne, ensalada, salsas y queso","imagen":"🍕","precio":6.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147545-58","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]}]},{"id":"plato-sultan","nombre":"Plato/Box","icono":"🍚","productos":[{"id":"plato-sultan-ensalada","nombre":"Plato Box pequeño","descripcion":"Pollo, ternera o mixto con ensalada y salsas","imagen":"🍚","precio":3.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147546-59","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"plato-sultan-arroz","nombre":"Plato Box mediano","descripcion":"Pollo, ternera o mixto con arroz y salsas","imagen":"🍚","precio":4.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147546-60","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"plato-especial-arroz","nombre":"Plato Box Grande","imagen":"🍚","precio":5.49,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147546-61","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"prod1785779216687-1","nombre":"MegaBox","descripcion":"Box grande con carne, patatas y arroz","imagen":"🍚","precio":6.99,"agotado":false}]},{"id":"raciones","nombre":"Raciones","icono":"🍟","productos":[{"id":"patatas-fritas","nombre":"Patatas fritas","imagen":"🍟","tamanos":[{"id":"t0","nombre":"Pequeña","precio":1.49},{"id":"t1","nombre":"Mediana","precio":1.99},{"id":"t2","nombre":"Grande","precio":2.99}],"agotado":false,"configurable":true},{"id":"patatas-deluxe","nombre":"Patatas Deluxe","imagen":"🍟","tamanos":[{"id":"t0","nombre":"Pequeña","precio":2.99},{"id":"t1","nombre":"Grande","precio":3.99}],"agotado":false,"configurable":true,"pasos":[{"id":"paso1785720147546-63","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"carne-con-patatas","nombre":"Carne con patatas","imagen":"🍖","tamanos":[{"id":"t0","nombre":"Pequeña","precio":3.49},{"id":"t1","nombre":"Mediano","precio":4.49},{"id":"t2","nombre":"Grande","precio":5.49}],"agotado":false,"configurable":true},{"id":"carne-con-arroz","nombre":"Carne con arroz","imagen":"🍚","tamanos":[{"id":"t0","nombre":"Pequeña","precio":3.49},{"id":"t1","nombre":"Mediano","precio":4.49},{"id":"t2","nombre":"Grande","precio":5.49}],"agotado":false,"configurable":true},{"id":"tiras-pollo","nombre":"Tiras de pollo (4 unidades)","imagen":"🍗","precio":3.99,"agotado":false,"configurable":true},{"id":"alitas-pollo","nombre":"Alitas de pollo (5 unidades)","imagen":"🍗","precio":3.49,"agotado":false,"configurable":true},{"id":"nuggets-racion","nombre":"Nuggets (8 unidades)","imagen":"🍗","precio":2.99,"agotado":false,"configurable":true},{"id":"bolitas-pollo","nombre":"Bolitas de pollo (15 unidades)","imagen":"🍗","precio":2.49,"agotado":false,"configurable":true},{"id":"ensalada-especial","nombre":"Ensalada especial","imagen":"🥗","precio":2.99,"agotado":false,"configurable":true}]},{"id":"individuales","nombre":"Individuales","icono":"🍔","productos":[{"id":"hamburguesa","nombre":"Hamburguesa","imagen":"🍔","precio":2.99,"agotado":false,"configurable":true,"pasos":[{"id":"paso1785779804423-2","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99}]}]},{"id":"perrito-caliente","nombre":"Perrito caliente","imagen":"🌭","precio":2.99,"agotado":false,"configurable":true},{"id":"prod1785721740093-2","nombre":"Patatas Gratinadas","descripcion":"Patatas gratinadas","imagen":"🍽️","precio":6.99,"agotado":false}]},{"id":"extras","nombre":"Extras","icono":"➕","productos":[{"id":"solo-pan","nombre":"Solo pan","descripcion":"Pan de pita solo","imagen":"🍞","precio":0.49,"agotado":false},{"id":"extra-queso","nombre":"Queso","imagen":"🧀","precio":0.49,"agotado":false},{"id":"tarro-salsa-roja","nombre":"Tarro de salsa roja","imagen":"🌶️","precio":0.49,"agotado":false},{"id":"tarro-salsa-blanca","nombre":"Tarro de salsa blanca","imagen":"🥛","precio":0.49,"agotado":false},{"id":"tarro-salsa-picante","nombre":"Tarro de salsa picante","imagen":"🔥","precio":0.49,"agotado":false},{"id":"tarro-ketchup","nombre":"Tarro de ketchup","imagen":"🍅","precio":0.49,"agotado":false},{"id":"tarro-mayonesa","nombre":"Tarro de mayonesa","descripcion":"Tarro de mayonesa","imagen":"🥚","precio":0.49,"agotado":false},{"id":"vaso-salsa","nombre":"Vaso de salsa","descripcion":"Vaso de salsa","imagen":"🥤","precio":2.99,"agotado":false}]},{"id":"cat1785779995954-1","nombre":"Bebidas","icono":"🥤","productos":[{"id":"prod1785780033726-2","nombre":"Refrescos","imagen":"🥤","precio":1.49,"agotado":false},{"id":"prod1785780060104-3","nombre":"Agua Chica","imagen":"💧","precio":0.99,"agotado":false},{"id":"prod1785780083551-4","nombre":"Agua Grande","imagen":"💧","precio":1.49,"agotado":false},{"id":"prod1785780110328-5","nombre":"Cola 2L","imagen":"🥤","precio":2.49,"agotado":false}]},{"id":"cocina","nombre":"Cocina","icono":"👨‍🍳","productos":[],"tipo":"cocina"}]};
+const EMBEDDED_DATA = {"config":{"nombre":"Komandi","subtitulo":"Cuentas de comanda","moneda":"€"},"categorias":[{"id":"menus","nombre":"Menús","icono":"🍔","productos":[{"id":"menu-hamburguesa","nombre":"Menú Hamburguesa","descripcion":"Hamburguesa + patatas + bebida","imagen":"🍔","precio":4.99,"configurable":true,"pasos":[{"id":"paso1785720147541-1","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147542-2","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147542-3","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785759948618-1","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Extra salsa dentro","precio":0,"opciones":[{"id":"sub0","nombre":"Blanca","precio":0},{"id":"sub1","nombre":"Roja","precio":0},{"id":"sub2","nombre":"Picante","precio":0},{"id":"sub3","nombre":"Kétchup","precio":0},{"id":"sub4","nombre":"Mayonesa","precio":0}]},{"id":"ext1","nombre":"Salsa aparte en tarro","precio":0.49,"opciones":[{"id":"sub0","nombre":"Blanca","precio":0.5},{"id":"sub1","nombre":"Roja","precio":0.5},{"id":"sub2","nombre":"Picante","precio":0.5},{"id":"sub3","nombre":"Kétchup","precio":0.5},{"id":"sub4","nombre":"Mayonesa","precio":0.5}]},{"id":"ext2","nombre":"Salsa aparte en vaso","precio":2.99,"opciones":[{"id":"sub0","nombre":"Blanca","precio":3},{"id":"sub1","nombre":"Roja","precio":3},{"id":"sub2","nombre":"Picante","precio":3},{"id":"sub3","nombre":"Kétchup","precio":3},{"id":"sub4","nombre":"Mayonesa","precio":3}]}]}]},{"id":"menu-nuggets","nombre":"Menú Nuggets","descripcion":"Nuggets + patatas + bebida","imagen":"🍗","precio":4.99,"configurable":true,"pasos":[{"id":"paso1785720147542-5","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147542-6","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147542-7","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-perrito","nombre":"Menú Perrito Caliente","descripcion":"Perrito caliente + patatas + bebida","imagen":"🌭","precio":4.99,"configurable":true,"pasos":[{"id":"paso1785720147542-8","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pan normal","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147542-9","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Salchicha","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147542-10","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-11","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-12","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-kebab","nombre":"Menú Kebab","descripcion":"Kebab pollo, ternera o mixto + patatas + bebida","imagen":"🥙","precio":6.49,"configurable":true,"pasos":[{"id":"paso1785720147543-13","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-14","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pan de pita","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147543-15","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-16","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-17","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-18","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-durum","nombre":"Menú Dürum","descripcion":"Dürum pollo, ternera o mixto + patatas + bebida","imagen":"🌯","precio":6.99,"configurable":true,"pasos":[{"id":"paso1785720147543-19","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-20","titulo":"Pan","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Dürum normal","precio":0},{"id":"op1","nombre":"Pan integral","precio":0.49}]},{"id":"paso1785720147543-21","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-22","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-23","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-24","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-pizza-turca","nombre":"Menú Pizza Turca","descripcion":"Pizza Turca pollo, ternera o mixto + patatas + bebida","imagen":"🍕","precio":7.99,"configurable":true,"pasos":[{"id":"paso1785720147543-25","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147543-26","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Queso","cantidad":1,"precioExtra":0.49},{"id":"ing2","nombre":"Cebolla","cantidad":1,"precioExtra":0.39},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0.39},{"id":"ing4","nombre":"Tomate","cantidad":1,"precioExtra":0.39},{"id":"ing5","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0.29},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0.29}]},{"id":"paso1785720147543-27","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-28","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-29","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-alitas","nombre":"Menú Alitas de Pollo","descripcion":"Alitas de pollo + patatas + bebida","imagen":"🍗","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147543-30","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147543-31","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147543-32","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-falafel","nombre":"Menú Falafel","descripcion":"Falafel dürum o pita + patatas + bebida","imagen":"🧆","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147544-33","titulo":"Presentación","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Dürum","precio":0},{"id":"op1","nombre":"Pita","precio":0}]},{"id":"paso1785720147544-34","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49},{"id":"op2","nombre":"Arroz","precio":0}]},{"id":"paso1785720147544-35","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-36","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-plato-sultan","nombre":"Menú Plato Sultán","descripcion":"Plato Sultán + patatas + bebida","imagen":"🍚","precio":7.99,"configurable":true,"pasos":[{"id":"paso1785720147544-37","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147544-38","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Arroz","precio":0},{"id":"op2","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-39","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-40","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-plato-especial-arroz","nombre":"Menú Plato Especial con Arroz","descripcion":"Plato especial con arroz + bebida","imagen":"🍚","precio":8.99,"configurable":true,"pasos":[{"id":"paso1785720147544-41","titulo":"Carne","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Pollo","precio":0},{"id":"op1","nombre":"Ternera","precio":0},{"id":"op2","nombre":"Mixta","precio":0}]},{"id":"paso1785720147544-42","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Arroz","precio":0},{"id":"op1","nombre":"Patatas","precio":0},{"id":"op2","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-43","titulo":"Bebida del menú","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Coca-Cola","precio":0},{"id":"op1","nombre":"Coca-Cola Zero","precio":0},{"id":"op2","nombre":"Fanta Naranja","precio":0},{"id":"op3","nombre":"Fanta Limón","precio":0},{"id":"op4","nombre":"7UP","precio":0},{"id":"op5","nombre":"Agua","precio":0}]},{"id":"paso1785720147544-44","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"menu-pareja","nombre":"Menú Pareja","descripcion":"Kebab + Dürum + patatas + 2 bebidas","imagen":"🥙","precio":12.49,"configurable":true,"pasos":[{"id":"paso1785720147544-45","titulo":"Guarnición","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Patatas","precio":0},{"id":"op1","nombre":"Patatas picantes","precio":0.49}]},{"id":"paso1785720147544-46","titulo":"Extras","tipo":"multi","items":[{"id":"ext0","nombre":"Doble de patatas","precio":0.99},{"id":"ext1","nombre":"Queso extra","precio":0.49},{"id":"ext2","nombre":"Salsas extra","precio":0.49}]}]},{"id":"prod1785721967704-3","nombre":"Menú Durum Tiras","descripcion":"Durum de tiras de pollo con patatas y bebida","imagen":"🌯","precio":7.49,"configurable":true,"pasos":[{"id":"paso1785722052134-4","titulo":"Patatas dentro","tipo":"seleccion","opciones":[{"id":"op0","nombre":"Tiras de pollo","precio":0},{"id":"op1","nombre":"Lechuga","precio":0},{"id":"op2","nombre":"Tomate","precio":0},{"id":"op3","nombre":"Cebolla","precio":0},{"id":"op4","nombre":"Zanahoria","precio":0},{"id":"op5","nombre":"Maíz","precio":0},{"id":"op6","nombre":"Patatas dentro","precio":0.99}]}]}]},{"id":"pita-kebab","nombre":"Pita Kebab","icono":"🥙","productos":[{"id":"kebab-base","nombre":"Kebab pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🥙","precio":4.49,"configurable":true,"pasos":[{"id":"paso1785720147544-47","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"kebab-queso","nombre":"Kebab con queso","descripcion":"Pollo, ternera o mixto con ensalada, salsas y queso","imagen":"🥙","precio":4.99,"configurable":true,"pasos":[{"id":"paso1785720147544-48","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"kebab-solo-carne","nombre":"Kebab solo carne","descripcion":"Carne o mixto con salsas","imagen":"🥙","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147544-49","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]}]},{"id":"durum-kebab","nombre":"Dürum Kebab","icono":"🌯","productos":[{"id":"durum-base","nombre":"Dürum pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🌯","precio":4.99,"configurable":true,"pasos":[{"id":"paso1785720147545-50","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-solo-carne","nombre":"Dürum solo carne","descripcion":"Carne o mixto con ensalada y salsas","imagen":"🌯","precio":5.99,"configurable":true,"pasos":[{"id":"paso1785720147545-51","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-queso","nombre":"Dürum con queso","descripcion":"Pollo, ternera o mixto con ensalada, salsas y queso","imagen":"🌯","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147545-52","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-nuggets","nombre":"Dürum de Nuggets","descripcion":"Rollo de nuggets","imagen":"🌯","precio":3.99,"configurable":true,"pasos":[{"id":"paso1785720147545-53","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-tiras-pollo","nombre":"Dürum de Tiras de Pollo","descripcion":"Rollo de tiras de pollo","imagen":"🌯","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147545-54","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"durum-falafel","nombre":"Dürum Falafel","descripcion":"Falafel, dürum o pita","imagen":"🧆","precio":4.49,"configurable":true,"pasos":[{"id":"paso1785720147545-55","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"prod1785778965468-1","nombre":"Durum Solo Carne Fino","imagen":"🌯","precio":4.99}]},{"id":"pizza-turca","nombre":"Pizza Turca","icono":"🍕","productos":[{"id":"pizza-turca-base","nombre":"Pizza Turca pollo, ternera o mixto","descripcion":"Con ensalada y salsas","imagen":"🍕","precio":5.99,"configurable":true,"pasos":[{"id":"paso1785720147545-56","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"pizza-turca-solo-carne","nombre":"Pizza Turca solo carne","descripcion":"Rollo solo carne o mixto con salsas","imagen":"🍕","precio":6.99,"configurable":true,"pasos":[{"id":"paso1785720147545-57","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"pizza-turca-queso","nombre":"Pizza Turca con queso","descripcion":"Rollo con carne, ensalada, salsas y queso","imagen":"🍕","precio":6.49,"configurable":true,"pasos":[{"id":"paso1785720147545-58","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]}]},{"id":"plato-sultan","nombre":"Plato/Box","icono":"🍚","productos":[{"id":"plato-sultan-ensalada","nombre":"Plato Box pequeño","descripcion":"Pollo, ternera o mixto con ensalada y salsas","imagen":"🍚","precio":3.49,"configurable":true,"pasos":[{"id":"paso1785720147546-59","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"plato-sultan-arroz","nombre":"Plato Box mediano","descripcion":"Pollo, ternera o mixto con arroz y salsas","imagen":"🍚","precio":4.49,"configurable":true,"pasos":[{"id":"paso1785720147546-60","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"plato-especial-arroz","nombre":"Plato Box Grande","imagen":"🍚","precio":5.49,"configurable":true,"pasos":[{"id":"paso1785720147546-61","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99},{"id":"ing1","nombre":"Cebolla","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Tomate","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Lechuga","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing6","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing7","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing8","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing9","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"prod1785779216687-1","nombre":"MegaBox","descripcion":"Box grande con carne, patatas y arroz","imagen":"🍚","precio":6.99}]},{"id":"raciones","nombre":"Raciones","icono":"🍟","productos":[{"id":"patatas-fritas","nombre":"Patatas fritas","imagen":"🍟","tamanos":[{"id":"t0","nombre":"Pequeña","precio":1.49},{"id":"t1","nombre":"Mediana","precio":1.99},{"id":"t2","nombre":"Grande","precio":2.99}],"configurable":true},{"id":"patatas-deluxe","nombre":"Patatas Deluxe","imagen":"🍟","tamanos":[{"id":"t0","nombre":"Pequeña","precio":2.99},{"id":"t1","nombre":"Grande","precio":3.99}],"configurable":true,"pasos":[{"id":"paso1785720147546-63","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Salsa blanca","cantidad":1,"precioExtra":0},{"id":"ing1","nombre":"Salsa roja","cantidad":1,"precioExtra":0},{"id":"ing2","nombre":"Salsa picante","cantidad":1,"precioExtra":0},{"id":"ing3","nombre":"Salsa de yogur","cantidad":1,"precioExtra":0},{"id":"ing4","nombre":"Ketchup","cantidad":1,"precioExtra":0},{"id":"ing5","nombre":"Mayonesa","cantidad":1,"precioExtra":0}]}]},{"id":"carne-con-patatas","nombre":"Carne con patatas","imagen":"🍖","tamanos":[{"id":"t0","nombre":"Pequeña","precio":3.49},{"id":"t1","nombre":"Mediano","precio":4.49},{"id":"t2","nombre":"Grande","precio":5.49}],"configurable":true},{"id":"carne-con-arroz","nombre":"Carne con arroz","imagen":"🍚","tamanos":[{"id":"t0","nombre":"Pequeña","precio":3.49},{"id":"t1","nombre":"Mediano","precio":4.49},{"id":"t2","nombre":"Grande","precio":5.49}],"configurable":true},{"id":"tiras-pollo","nombre":"Tiras de pollo (4 unidades)","imagen":"🍗","precio":3.99,"configurable":true},{"id":"alitas-pollo","nombre":"Alitas de pollo (5 unidades)","imagen":"🍗","precio":3.49,"configurable":true},{"id":"nuggets-racion","nombre":"Nuggets (8 unidades)","imagen":"🍗","precio":2.99,"configurable":true},{"id":"bolitas-pollo","nombre":"Bolitas de pollo (15 unidades)","imagen":"🍗","precio":2.49,"configurable":true},{"id":"ensalada-especial","nombre":"Ensalada especial","imagen":"🥗","precio":2.99,"configurable":true}]},{"id":"individuales","nombre":"Individuales","icono":"🍔","productos":[{"id":"hamburguesa","nombre":"Hamburguesa","imagen":"🍔","precio":2.99,"configurable":true,"pasos":[{"id":"paso1785779804423-2","titulo":"Ingredientes","tipo":"ingredientes","items":[{"id":"ing0","nombre":"Carne","cantidad":1,"precioExtra":0.99}]}]},{"id":"perrito-caliente","nombre":"Perrito caliente","imagen":"🌭","precio":2.99,"configurable":true},{"id":"prod1785721740093-2","nombre":"Patatas Gratinadas","descripcion":"Patatas gratinadas","imagen":"🍽️","precio":6.99}]},{"id":"extras","nombre":"Extras","icono":"➕","productos":[{"id":"solo-pan","nombre":"Solo pan","descripcion":"Pan de pita solo","imagen":"🍞","precio":0.49},{"id":"extra-queso","nombre":"Queso","imagen":"🧀","precio":0.49},{"id":"tarro-salsa-roja","nombre":"Tarro de salsa roja","imagen":"🌶️","precio":0.49},{"id":"tarro-salsa-blanca","nombre":"Tarro de salsa blanca","imagen":"🥛","precio":0.49},{"id":"tarro-salsa-picante","nombre":"Tarro de salsa picante","imagen":"🔥","precio":0.49},{"id":"tarro-ketchup","nombre":"Tarro de ketchup","imagen":"🍅","precio":0.49},{"id":"tarro-mayonesa","nombre":"Tarro de mayonesa","descripcion":"Tarro de mayonesa","imagen":"🥚","precio":0.49},{"id":"vaso-salsa","nombre":"Vaso de salsa","descripcion":"Vaso de salsa","imagen":"🥤","precio":2.99}]},{"id":"cat1785779995954-1","nombre":"Bebidas","icono":"🥤","productos":[{"id":"prod1785780033726-2","nombre":"Refrescos","imagen":"🥤","precio":1.49},{"id":"prod1785780060104-3","nombre":"Agua Chica","imagen":"💧","precio":0.99},{"id":"prod1785780083551-4","nombre":"Agua Grande","imagen":"💧","precio":1.49},{"id":"prod1785780110328-5","nombre":"Cola 2L","imagen":"🥤","precio":2.49}]},{"id":"cocina","nombre":"Cocina","icono":"👨‍🍳","productos":[],"tipo":"cocina"}]};
 
 /* --- Mock fetch para demo: todas las /api/* se resuelven con localStorage --- */
 if (typeof EMBEDDED_DATA !== 'undefined' && EMBEDDED_DATA) {
@@ -3436,9 +4172,42 @@ let statsMetodoFiltro = 'todos'; /* 'todos' | 'efectivo' | 'tarjeta' */
 let statsBusqueda = '';     /* búsqueda libre en el historial (cliente/teléfono/nº) */
 
 const $ = (s) => document.querySelector(s);
+/* Reinicia el scroll de la carta y de la barra de categorías al cambiar de
+   sección (en PC ambas ruedan por dentro y no deben arrastrar su posición). */
+function cartaArriba() {
+  const el = document.getElementById('productos');
+  if (el) el.scrollTop = 0;
+}
+function reseteoSeccion() {
+  const cats = document.getElementById('categorias');
+  if (cats) cats.scrollTop = 0;
+  cartaArriba();
+}
+/* El mismo criterio del CSS: el layout de escritorio usa pantallas anchas,
+   ratón y puntero fino (mismas media queries que @media ... styles.css). */
+function isPcLayout() {
+  return window.matchMedia('(min-width: 1100px) and (hover: hover) and (pointer: fine)').matches;
+}
 const red = (n) => Math.round(n * 100) / 100;
 const MAX_CANTIDAD = 9;
 const USUARIO_KEY = 'komandi_usuario';
+
+/* Colores editables del tema en la página de Configuración.
+   Cada campo: etiqueta visible, clave en config.tema, variable CSS y valor por defecto. */
+const TEMA_CAMPOS = [
+  { etiqueta: 'Principal', clave: 'principal', cssVar: '--principal', def: '#e2541f' },
+  { etiqueta: 'Destacado', clave: 'destacado', cssVar: '--principal2', def: '#ff7a3d' },
+  { etiqueta: 'Fondo', clave: 'bg', cssVar: '--bg', def: '#16100d' },
+  { etiqueta: 'Superficie', clave: 'superficie', cssVar: '--superficie', def: '#221813' },
+  { etiqueta: 'Superficie clara', clave: 'superficie2', cssVar: '--superficie2', def: '#2b1e17' },
+  { etiqueta: 'Bordes', clave: 'borde', cssVar: '--borde', def: '#3a2a20' },
+  { etiqueta: 'Texto', clave: 'texto', cssVar: '--texto', def: '#f3ead9' },
+  { etiqueta: 'Texto secundario', clave: 'texto2', cssVar: '--texto2', def: '#b9a795' },
+  { etiqueta: 'En marcha (cocina)', clave: 'enmarcha', cssVar: '--en-marcha', def: '#ff9800' },
+  { etiqueta: 'Éxito / correcto', clave: 'ok', cssVar: '--ok', def: '#4caf7d' },
+  { etiqueta: 'Peligro / error', clave: 'peligro', cssVar: '--peligro', def: '#d6453d' }
+];
+function temaId(clave) { return 'admin-tema-' + clave; }
 
 function leerLocalStorageJSON(clave, defecto) {
   try { return JSON.parse(localStorage.getItem(clave) || JSON.stringify(defecto)); }
@@ -3628,6 +4397,9 @@ async function pedirEstado() {
     if (!res.ok) return null;
     const d = await res.json();
     const set = new Set(usuariosDetectados || []);
+    if (d && Array.isArray(d.usuarios)) {
+      d.usuarios.forEach((u) => { if (u && String(u).trim()) set.add(String(u).trim()); });
+    }
     cargarComandasLocal().forEach((c) => {
       if (c && c.cajero) set.add(String(c.cajero));
       if (c && c.cocinero) set.add(String(c.cocinero));
@@ -3833,6 +4605,23 @@ return (
     '</div>'
   );
  }
+
+/* Fuerza el color de fondo de cada swatch y del botón con color guardado vía
+   JS (fallback para WebViews que no aplican inline styles o CSS variables
+   correctamente). El input oculto es la fuente de verdad, no el CSS. */
+function pintarSwatches(root) {
+  const src = root || document;
+  src.querySelectorAll('.cp-swat[data-cp]').forEach(function(el) {
+    var c = el.getAttribute('data-cp');
+    if (c) { el.style.background = c; el.style.setProperty('--cp', c); }
+  });
+  src.querySelectorAll('.cp-btn[data-tiene]').forEach(function(el) {
+    var cp = el.closest('.cp');
+    var hidden = cp ? cp.querySelector('input[data-campo]') : null;
+    var c = hidden ? normColor(hidden.value) : '';
+    if (c) { el.style.background = c; el.style.setProperty('--cp', c); }
+  });
+}
 
 /* Refleja un color ('' = sin color) en todos los elementos de un selector .cp */
 function actualizarCP(cp, color) {
@@ -4184,6 +4973,7 @@ function actualizarNavegacion() {
   nav.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('activo', b.dataset.seccion === sec));
 }
 function seleccionarSeccion(sec) {
+  reseteoSeccion();
   if (sec === 'cobros') {
     if (cobrosActivos()) seleccionarCategoria('__cobros');
     return;
@@ -4201,6 +4991,7 @@ function seleccionarSeccion(sec) {
 
 let catAnterior = null;
 function seleccionarCategoria(id) {
+  cartaArriba();
   if (id === '__cobros') {
     if (!cobrosActivos()) {
       const menuCat = categorias.find((c) => c.tipo !== 'cocina');
@@ -4260,13 +5051,14 @@ function renderProductos() {
   repartosMontada = false;
   if (cat.tipo === 'cocina') { renderCocina(); return; }
   grid.innerHTML = cat.productos.map(tarjetaProducto).join('');
+  grid.scrollTop = 0;
 }
 
 /* ---------- Modo cocina ---------- */
 let hayServidor = false;
 let cocinaMontada = false;
 let repartosMontada = false; /* la vista de repartos se refresca sola, igual que la cocina */
-let cocinaFiltroEstado = 'pendiente'; /* 'todas' | 'pendiente' | 'haciendo' | 'hecha' */
+let cocinaFiltroEstado = (isPcLayout() ? 'todas' : 'pendiente'); /* 'todas' | 'pendiente' | 'haciendo' | 'hecha' */
 let cocinaHechasPagina = 0;
 const HECHAS_POR_PAGINA = 20;
 let cocinaFiltroTipo = 'todas';   /* 'todas' | 'comer' | 'llevar' */
@@ -4523,12 +5315,15 @@ function seleccionDesdeNotas(pasos, it, tamNombre) {
       else op = paso.opciones.find((o) => nombres.some((n) => n === o.nombre));
       if (op) sel[paso.id] = op.id;
     } else if (paso.tipo === 'ingredientes') {
-      const notasLower = (it.notas || []).map((x) => x.toLowerCase());
+      /* Los extras SIN precio van a notas ("Lechuga ×2") y los CON precio a
+         mods ("Lechuga ×2", p). Hay que mirar ambos para no perder la ×N. */
+      const nombresIngredientes = (it.notas || []).concat((it.mods || []).map((m) => m.n));
+      const notasLower = nombresIngredientes.map((x) => x.toLowerCase());
       for (const itt of paso.items) {
         const nLower = itt.nombre.toLowerCase();
         if (notasLower.includes('sin ' + nLower)) { sel[paso.id][itt.id] = 0; continue; }
         const re = new RegExp('^' + escapeRe(itt.nombre) + '\\s*×\\s*(\\d+)$', 'i');
-        const found = (it.notas || []).map((x) => x.match(re)).find((mm) => mm);
+        const found = nombresIngredientes.map((x) => x.match(re)).find((mm) => mm);
         if (found) sel[paso.id][itt.id] = parseInt(found[1], 10);
         else if (notasLower.includes(nLower)) sel[paso.id][itt.id] = itt.cantidad || 1;
       }
@@ -4661,18 +5456,30 @@ async function guardarComandaEditada() {
   refrescarCocina();
 }
 
+function horaCocinaReloj() {
+  const d = new Date();
+  const fec = d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+  const hora = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  return '🕐 ' + fec + ' · ' + hora;
+}
+
 function renderCocina() {
   cocinaMontada = true;
+  $('#productos').scrollTop = 0;
   document.body.classList.add('modo-cocina');
   document.body.classList.remove('modo-cobros', 'modo-repartos');
   $('#productos').innerHTML =
     '<div class="cocina">' +
       '<div class="cocina-cabecera">' +
         '<h3 class="paso-titulo">👨‍🍳 Cocina</h3>' +
-        '<span id="cocina-estado" class="cocina-estado">…</span>' +
+        '<span class="cocina-cab-extra">' +
+          '<span id="cocina-reloj" class="cocina-reloj">' + horaCocinaReloj() + '</span>' +
+          '<span id="cocina-estado" class="cocina-estado">…</span>' +
+        '</span>' +
       '</div>' +
-      '<div id="cocina-resumen" class="cocina-resumen"></div>' +
-      '<div class="cocina-filtros">' +
+      '<div class="cocina-toolbar">' +
+        '<div id="cocina-resumen" class="cocina-resumen"></div>' +
+        '<div class="cocina-filtros">' +
         '<div class="seg cocina-filtro-tipo">' +
           '<button class="' + (cocinaFiltroTipo === 'todas' ? 'activo' : '') + '" data-cocina-filtro-tipo="todas">Todas</button>' +
           '<button class="' + (cocinaFiltroTipo === 'comer' ? 'activo' : '') + '" data-cocina-filtro-tipo="comer">🍽 Comer aquí</button>' +
@@ -4690,6 +5497,7 @@ function renderCocina() {
           '</select>' +
         '</div>' +
       '</div>' +
+      '</div>' +
       '<div id="lista-comandas" class="lista-comandas"></div>' +
     '</div>';
   refrescarCocina();
@@ -4700,6 +5508,8 @@ async function refrescarCocina() {
   const cat = categorias.find((c) => c.id === catActual);
   if (!cat || cat.tipo !== 'cocina') return;
   const estado = $('#cocina-estado');
+  const reloj = $('#cocina-reloj');
+  if (reloj) reloj.textContent = horaCocinaReloj();
   try {
     const res = await fetchApi('/api/comandas', { cache: 'no-store' });
     if (res.ok) {
@@ -4743,11 +5553,17 @@ function renderListaComandas(lista, origen) {
   const resumen = $('#cocina-resumen');
   if (!cont) return;
   cocinaComandas = lista;
+  /* En PC, al filtrar por un solo estado las comandas salen en rejilla
+     (varias por fila); con «Todas» sale el tablero de 3 columnas. */
+  cont.classList.toggle('lista-grid', cocinaFiltroEstado !== 'todas');
   document.querySelectorAll('[data-cocina-filtro-tipo]').forEach((b) => b.classList.toggle('activo', b.dataset.cocinaFiltroTipo === cocinaFiltroTipo));
   document.querySelectorAll('[data-cocina-filtro-estado]').forEach((b) => b.classList.toggle('activo', b.dataset.cocinaFiltroEstado === cocinaFiltroEstado));
   const selPersona = document.getElementById('cocina-filtro-persona');
   if (selPersona) {
-    const personas = [...new Set(lista.map((c) => c.cajero || c.cocinero).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+    const personas = [...new Set([].concat(
+      lista.flatMap((c) => [c.cajero, c.cocinero]).filter(Boolean),
+      usuariosDetectados || []
+    ).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
     if (!personas.includes(cocinaFiltroPersona)) cocinaFiltroPersona = '';
     const firma = personas.join('\u0000');
     if (selPersona._firma !== firma) {
@@ -4778,7 +5594,7 @@ function renderListaComandas(lista, origen) {
     { estado: 'hecha', clase: 'hechas', titulo: 'Completadas', icono: '✅' }
   ];
   const coincideFiltroTipo = (c) => cocinaFiltroTipo === 'todas' || (esParaLlevar(c) ? 'llevar' : 'comer') === cocinaFiltroTipo;
-  const coincideFiltroPersona = (c) => !cocinaFiltroPersona || (c.cajero || c.cocinero) === cocinaFiltroPersona;
+  const coincideFiltroPersona = (c) => !cocinaFiltroPersona || c.cajero === cocinaFiltroPersona || c.cocinero === cocinaFiltroPersona;
   const html = secciones
     .filter((s) => cocinaFiltroEstado === 'todas' || s.estado === cocinaFiltroEstado)
     .map((s) => {
@@ -4816,7 +5632,31 @@ function renderListaComandas(lista, origen) {
   if (cont._html !== html) {
     cont.innerHTML = html;
     cont._html = html;
+    pintarModosTinta(cont);
   }
+}
+
+/* Fuerza el fondo y la tinta de los badges de cocina via JS (fallback para
+   WebViews que no aplican inline styles o CSS variables correctamente). */
+function pintarModosTinta(root) {
+  (root || document).querySelectorAll('.c-mod.tinta[data-cp]').forEach(function(el) {
+    var c = el.getAttribute('data-cp');
+    if (c) {
+      el.style.background = c;
+      el.style.borderColor = c;
+      el.style.color = tintaColor(c);
+      el.style.setProperty('--mc', c);
+      el.style.setProperty('--mc-txt', tintaColor(c));
+    }
+  });
+}
+
+/* Pinta los puntos de color de las opciones del asistente. */
+function pintarOpcDots(root) {
+  (root || document).querySelectorAll('.opc-dot[data-cp]').forEach(function(el) {
+    var c = el.getAttribute('data-cp');
+    if (c) el.style.background = c;
+  });
 }
 
 /* Devuelve el color asignado a una opción/ingrediente por su nombre.
@@ -4854,6 +5694,13 @@ function colorDeNombre(nombre) {
   if (map[base.replace(/\s*×\s*\d+.*$/, '').trim()]) return map[base.replace(/\s*×\s*\d+.*$/, '').trim()];
   return '';
 }
+/* Devuelve '#fff' o '#1c1713' según la luminancia del color para máximo contraste */
+function tintaColor(hex) {
+  var v = String(hex || '').replace('#', '');
+  if (v.length !== 6) return '#fff';
+  var r = parseInt(v.slice(0, 2), 16), g = parseInt(v.slice(2, 4), 16), b = parseInt(v.slice(4, 6), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1c1713' : '#ffffff';
+}
 function tarjetaComanda(c) {
   const fecha = c.hora ? new Date(c.hora) : null;
   const horaTxt = fecha ? fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -4864,39 +5711,68 @@ function tarjetaComanda(c) {
     : '<span class="c-tipo">🍽 Comer aquí</span>';
   const items = (c.items || [])
     .map((it) => {
+      /* Tolera esquema antiguo: cantidad/precio en vez de qty/sub */
+      const qty = (it.qty != null ? it.qty : (it.cantidad || 1));
+      const sub = (it.sub != null ? it.sub : red((it.precio || 0) * qty));
       const mods = (it.mods && Array.isArray(it.mods) ? it.mods : []).filter((m) => m && m.n);
       const notas = (it.notas && Array.isArray(it.notas) ? it.notas : []).filter((n) =>
         !mods.some((m) => m.n === n || n.indexOf(m.n) === 0)
       );
+      /* Las notas con color configurado salen como badge de color (las
+         opciones gratuitas van a notas, no a mods). Las notas sin color
+         quedan como texto explicativo. */
+      const chips = mods.map((m) => {
+        const col = colorDeNombre(m.n);
+        const tinta = col ? tintaColor(col) : '';
+        if (col) {
+          return '<span class="c-mod tinta" data-cp="' + col + '" style="--mc:' + col + ';--mc-txt:' + tinta + ';background:' + col + ';color:' + tinta + ';border-color:' + col + '">' + esc(m.n) + ' <em>+' + fmt(m.p) + '</em></span>';
+        }
+        return '<span class="c-mod">' + esc(m.n) + ' <em>+' + fmt(m.p) + '</em></span>';
+      });
+      /* Las opciones gratuitas van a «notas», no a «mods». Todos salen como
+         badge: con color → píldora rellena; sin color → píldora transparente. */
+      notas.forEach((n) => {
+        const col = colorDeNombre(n);
+        if (col) {
+          const tinta = tintaColor(col);
+          chips.push('<span class="c-mod tinta" data-cp="' + col + '" style="--mc:' + col + ';--mc-txt:' + tinta + ';background:' + col + ';color:' + tinta + ';border-color:' + col + '">' + esc(n) + '</span>');
+        } else {
+          chips.push('<span class="c-mod">' + esc(n) + '</span>');
+        }
+      });
       return (
       '<div class="c-item">' +
         '<div class="c-item-linea">' +
-          '<span class="c-item-cant">' + it.qty + '×</span>' +
+          '<span class="c-item-cant">' + qty + '×</span>' +
           '<span class="c-item-nombre">' + it.nombre + '</span>' +
-          '<span class="c-item-precio">' + fmt(it.sub) + '</span>' +
+          '<span class="c-item-precio">' + fmt(sub) + '</span>' +
         '</div>' +
-        (mods.length ? '<div class="c-mods">' +
-          mods.map((m) => {
-            const col = colorDeNombre(m.n);
-            return '<span class="c-mod">' + (col ? '<i class="c-mod-color" style="--mc:' + col + ';background:' + col + '"></i>' : '') + esc(m.n) + ' <em>+' + fmt(m.p) + '</em></span>';
-          }).join('') +
-        '</div>' : '') +
-        (notas.length ? '<div class="c-detalle">' + notas.map((n) => '· ' + n).join(' ') + '</div>' : '') +
+        (chips.length ? '<div class="c-mods">' + chips.join('') + '</div>' : '') +
       '</div>'
       );
     })
     .join('');
   const clase = hecha ? ' c-hecha' : (enMarcha ? ' c-haciendo' : ' c-pendiente');
-  const badgeMini = hecha ? '<span class="badge-hecha-mini">Hecha ✓</span>' : (enMarcha ? '<span class="badge-enmarcha-mini">En marcha</span>' : '');
+  const badgeMini = hecha
+    ? '<span class="badge-hecha-mini">✓ Hecha</span>'
+    : (enMarcha ? '<span class="badge-enmarcha-mini">🔥 En marcha</span>' : '<span class="badge-pendiente-mini">⏳ Por hacer</span>');
   const personas = (c.cajero || c.cocinero)
     ? '<div class="c-personas">' +
-        (c.cajero ? '<span class="c-cajero">👤 Toma: ' + esc(c.cajero) + '</span>' : '') +
-        (c.cocinero ? '<span class="c-cocinero">👨‍🍳 Prepara: ' + esc(c.cocinero) + '</span>' : '') +
+        (c.cajero
+          ? '<span class="c-cajero">👤 Toma: <b>' + esc(c.cajero) + '</b></span>'
+          : '') +
+        (c.cocinero
+          ? '<span class="c-cocinero">👨‍🍳 Prepara: <b>' + esc(c.cocinero) + '</b></span>'
+          : '') +
       '</div>'
     : '';
+  const tags = [
+    tipoTxt,
+    (c.clienteId || (c.cliente && c.cliente.id) ? '<span class="c-cliente-badge">👤 Cliente</span>' : '')
+  ].filter(Boolean).join('');
   let botones;
   if (hecha) {
-    botones = '<span class="badge-hecha">Hecha ✓</span>' +
+    botones = '<span class="badge-hecha">✓ Hecha</span>' +
       '<button class="btn btn-secundario" data-comanda="' + c.id + '" data-accion="borrar">Borrar</button>';
   } else {
     botones = '<button class="btn btn-secundario' + (enMarcha ? ' en-marcha-activo' : '') + '" data-comanda="' + c.id + '" data-accion="haciendo">' + (enMarcha ? '✓ En marcha' : '▶ En marcha') + '</button>' +
@@ -4905,17 +5781,22 @@ function tarjetaComanda(c) {
   }
   return (
     '<div class="c-card' + clase + '" data-id="' + c.id + '">' +
-      '<div class="c-top">' +
-        '<span class="c-num">' + esc(etiquetaComanda(c)) + '</span>' +
-        '<span class="c-hora">' + horaTxt + '</span>' +
-        badgeMini +
-        '<span class="c-total">' + fmt(c.total) + '</span>' +
-        '<button class="icon-btn c-editar" data-comanda="' + c.id + '" data-accion="editar" aria-label="Editar comanda">✎</button>' +
+      '<div class="c-cab">' +
+        '<div class="c-cab-fila">' +
+          '<span class="c-num">' + esc(etiquetaComanda(c)) + '</span>' +
+          '<span class="c-hora">🕐 ' + horaTxt + '</span>' +
+          badgeMini +
+        '</div>' +
+        '<div class="c-cab-fila2">' +
+          (tags ? '<span class="c-tags">' + tags + '</span>' : '') +
+          '<span class="c-cab-der">' +
+            '<span class="c-total">' + fmt(c.total) + '</span>' +
+            '<button class="icon-btn c-editar" data-comanda="' + c.id + '" data-accion="editar" aria-label="Editar comanda">✎</button>' +
+          '</span>' +
+        '</div>' +
       '</div>' +
-      tipoTxt +
-      (c.clienteId || (c.cliente && c.cliente.id) ? '<span class="c-cliente-badge">👤 Cliente</span>' : '') +
+      (personas ? personas : '') +
       envioHtml(c) +
-      personas +
       (c.nota ? '<div class="comanda-nota">📝 ' + esc(c.nota) + '</div>' : '') +
       '<div class="c-items">' + items + '</div>' +
       '<div class="c-botones">' + botones + '</div>' +
@@ -5090,28 +5971,36 @@ function renderRepartos() {
   const entreg = repartosDatos.filter((c) => c.entregado);
   const ver = repartosFiltro === 'entregados' ? entreg : pend;
   const totalPend = red(pend.reduce((s, c) => s + (c.total || 0), 0));
+  const verTexto = repartosFiltro === 'entregados'
+    ? (entreg.length + ' entregado' + (entreg.length === 1 ? '' : 's'))
+    : (pend.length + ' por entregar');
   grid.innerHTML =
     '<div class="repartos">' +
       '<div class="repartos-cabecera">' +
         '<h3 class="paso-titulo">🛵 Repartos</h3>' +
-        '<span class="repartos-estado">' + pend.length + ' por entregar</span>' +
+        '<span class="repartos-estado">' + verTexto + '</span>' +
       '</div>' +
-      '<div class="repartos-resumen">' +
-        '<span class="chip-chip pend' + (pend.length ? ' con' : '') + '">' + pend.length + ' por entregar</span>' +
-        '<span class="chip-chip hechas' + (entreg.length ? ' con' : '') + '">' + entreg.length + ' entregado' + (entreg.length === 1 ? '' : 's') + '</span>' +
-        (cobrosActivos() ? '<span class="chip-chip cobros' + (pend.length ? ' con' : '') + '">Pendiente de cobrar: ' + fmt(totalPend) + '</span>' : '') +
-      '</div>' +
-      '<div class="cocina-filtros">' +
-        '<div class="seg">' +
-          '<button class="' + (repartosFiltro !== 'entregados' ? 'activo' : '') + '" data-repartos-filtro="pendientes">🛵 Por entregar</button>' +
-          '<button class="' + (repartosFiltro === 'entregados' ? 'activo' : '') + '" data-repartos-filtro="entregados">✅ Entregados</button>' +
+      '<div class="repartos-bar">' +
+        '<div class="repartos-resumen">' +
+          '<span class="chip-chip pend' + (pend.length ? ' con' : '') + '">' + pend.length + ' por entregar</span>' +
+          '<span class="chip-chip hechas' + (entreg.length ? ' con' : '') + '">' + entreg.length + ' entregado' + (entreg.length === 1 ? '' : 's') + '</span>' +
+          (cobrosActivos() ? '<span class="chip-chip repartos-cobro' + (pend.length ? ' con' : '') + '">Pendiente de cobrar: ' + fmt(totalPend) + '</span>' : '') +
+        '</div>' +
+        '<div class="cocina-filtros">' +
+          '<div class="seg">' +
+            '<button class="' + (repartosFiltro !== 'entregados' ? 'activo' : '') + '" data-repartos-filtro="pendientes">🛵 Por entregar</button>' +
+            '<button class="' + (repartosFiltro === 'entregados' ? 'activo' : '') + '" data-repartos-filtro="entregados">✅ Entregados</button>' +
+          '</div>' +
         '</div>' +
       '</div>' +
       '<div id="lista-repartos" class="lista-repartos"></div>' +
     '</div>';
   const cont = $('#lista-repartos');
   if (!ver.length) {
-    cont.innerHTML = '<div class="vacio">' + (repartosFiltro === 'entregados' ? 'Aún no hay entregas realizadas.' : 'No hay repartos por entregar. 🎉') + '</div>';
+    const rv = repartosFiltro === 'entregados'
+      ? '<div class="rv-vacio"><span class="rv-emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span><b>Aún no hay entregas realizadas</b><span class="rv-sub">Los repartos que entregues aparecerán aquí.</span></div>'
+      : '<div class="rv-vacio"><span class="rv-emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/><path d="M12 6l-2 4h5l2 4"/><path d="M2 13h2a1 1 0 0 1 1 1v1.5"/></svg></span><b>No hay repartos por entregar</b><span class="rv-sub">Todo listo por ahora.</span></div>';
+    cont.innerHTML = rv;
     return;
   }
   cont.innerHTML = ver.map(repartoHtml).join('');
@@ -5198,7 +6087,7 @@ function repartoHtml(c) {
     '<div class="reparto-pie">' +
       '<div class="reparto-acciones">' +
         (tel ? '<a class="btn btn-secundario btn-mini" href="tel:' + esc(tel) + '">📞 Llamar</a>' : '') +
-        '<a class="btn btn-secundario btn-mini" href="' + esc(gmaps) + '" target="_blank" rel="noopener">🗺 Maps</a>' +
+        '<a class="btn btn-secundario btn-mini" href="' + esc(gmaps) + '" target="_blank" rel="noopener" aria-label="Cómo llegar en Google Maps" title="Cómo llegar en Google Maps"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg> Maps</a>' +
       '</div>' +
       (acciones.length ? '<div class="reparto-acciones-principales">' + acciones.join('') + '</div>' : '') +
     '</div>' +
@@ -5296,7 +6185,11 @@ function renderCobros() {
     '<div class="cobros">' +
       '<div class="cobros-cabecera">' +
         '<h3 class="paso-titulo">💰 Cobros</h3>' +
-        '<span class="cobros-estado">' + pendientes.length + ' pendiente' + (pendientes.length === 1 ? '' : 's') + ' · ' + fmt(totalPendiente) + '</span>' +
+        '<span class="cobros-mini">' +
+          '<span class="cm-count">' + pendientes.length + '</span>' +
+          '<span class="cm-text">pendiente' + (pendientes.length === 1 ? '' : 's') + '</span>' +
+          '<span class="cm-total">' + fmt(totalPendiente) + '</span>' +
+        '</span>' +
       '</div>' +
       '<div class="cobros-subtabs">' +
         '<button class="cobros-subtab activa" data-cobros-view="pendientes">Pendientes</button>' +
@@ -5356,7 +6249,23 @@ function renderPendientesCobros(cont) {
 function tarjetaPendiente(c) {
   const fecha = c.hora ? new Date(c.hora) : null;
   const hora = fecha ? fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
-  const items = (c.items || []).map((it) => it.qty + '× ' + esc(it.nombre)).join(' · ');
+  const items = (c.items || []).map((it) => {
+    const mods = (it.mods || []).filter((m) => m && m.n);
+    const extras = mods.concat((it.notas || []).filter(Boolean).map((n) => ({ n: n })));
+    const sub = (it.sub != null ? it.sub : (it.precio || 0) * (it.qty || 1)) || 0;
+    return '<div class="cb-item">' +
+      '<div class="cb-item-top">' +
+        '<span class="cb-qty">' + (it.qty || 1) + '×</span>' +
+        '<span class="cb-nombre">' + esc(it.nombre) + '</span>' +
+        '<span class="cb-sub">' + fmt(sub) + '</span>' +
+      '</div>' +
+      (extras.length
+        ? '<div class="cb-mods">' + extras.map((m) =>
+            '<div class="cb-mod"><span>' + esc(m.n) + '</span>' + (typeof m.p === 'number' && m.p !== 0 ? '<span class="cb-mod-p">+' + fmt(m.p) + '</span>' : '') + '</div>'
+          ).join('') + '</div>'
+        : '') +
+    '</div>';
+  }).join('');
   return (
     '<div class="cobro-card" data-id="' + esc(c.id) + '">' +
       '<div class="cobro-card-top">' +
@@ -5544,9 +6453,22 @@ function renderCobro() {
       accionesTicketHtml(comanda);
     return;
   }
-  const itemsHtml = (comanda.items || []).map((it) =>
-    '<div class="cobro-item-row"><span class="ci-cant">' + it.qty + '×</span><span class="ci-nombre">' + esc(it.nombre) + '</span><span class="ci-sub">' + fmt(it.sub || 0) + '</span></div>'
-  ).join('');
+  const itemsHtml = (comanda.items || []).map((it) => {
+    const mods = (it.mods || []).filter((m) => m && m.n);
+    const extras = mods.concat((it.notas || []).filter(Boolean).map((n) => ({ n: n })));
+    return '<div class="cobro-item-row">' +
+        '<span class="ci-cant">' + (it.qty || 1) + '×</span>' +
+        '<div class="ci-main">' +
+          '<span class="ci-nombre">' + esc(it.nombre) + '</span>' +
+          (extras.length
+            ? '<span class="ci-extras">' + extras.map((m) =>
+                '<span class="ci-extra"><span>' + esc(m.n) + '</span>' + (typeof m.p === 'number' && m.p !== 0 ? '<span class="ci-extra-p">+' + fmt(m.p) + '</span>' : '') + '</span>'
+              ).join('') + '</span>'
+            : '') +
+        '</div>' +
+        '<span class="ci-sub">' + fmt((it.sub != null ? it.sub : (it.precio || 0) * (it.qty || 1)) || 0) + '</span>' +
+      '</div>';
+  }).join('');
   const subtotal = comanda.total || 0;
   const propinaHabilitada = propinasActivas();
   const propina = propinaHabilitada ? (c.propina || 0) : 0;
@@ -6245,6 +7167,7 @@ function renderWizard() {
   renderProgreso();
   const paso = w.pasos[w.pasoActual];
   $('#sidebar-pasos').innerHTML = '<h3 class="paso-titulo">' + (paso.id === '__tamano' ? 'Tamaño' : paso.titulo) + '</h3>' + renderPaso(paso);
+  pintarOpcDots($('#sidebar-pasos'));
   const d = construirDetalle(w.producto, w.pasos, w.seleccion);
   $('#sidebar-precio').textContent = fmt(d.subtotal);
   $('#sidebar-atras').classList.toggle('oculto', w.pasoActual === 0);
@@ -6263,6 +7186,7 @@ function renderPaso(paso) {
         return (
           '<button class="opcion ' + (sel ? 'seleccionada' : '') + (o.agotado ? ' agotada' : '') + '" data-opcion="' + o.id + '"' + (o.agotado ? ' disabled' : '') + '>' +
             '<span class="check">' + (sel ? '●' : '○') + '</span>' +
+            (o.color ? '<span class="opc-dot" data-cp="' + o.color + '"></span>' : '') +
             '<span class="opcion-nombre">' + o.nombre + (o.agotado ? ' <em class="opc-agotado-txt">agotado</em>' : '') + '</span>' +
             '<span class="opcion-precio">' + precioTxt + '</span>' +
           '</button>'
@@ -6281,7 +7205,7 @@ function renderPaso(paso) {
         const detallePrecio = it.precioExtra > 0 ? '<small>+ ' + fmt(it.precioExtra) + ' por unidad extra</small>' : '';
         return (
           '<div class="ingrediente ' + (qty !== baseQty ? 'modificado' : '') + (it.agotado ? ' agotada' : '') + '">' +
-            '<span class="ing-nombre">' + it.nombre + (it.agotado ? ' <em class="opc-agotado-txt">agotado</em>' : '') + detallePrecio + '</span>' +
+            '<span class="ing-nombre">' + (it.color ? '<span class="opc-dot" data-cp="' + it.color + '" style="margin-right:6px"></span>' : '') + it.nombre + (it.agotado ? ' <em class="opc-agotado-txt">agotado</em>' : '') + detallePrecio + '</span>' +
             (it.agotado
               ? '<div class="stepper"><span class="stp-num">sin él</span></div>'
               : '<div class="stepper">' +
@@ -6310,6 +7234,7 @@ function renderPaso(paso) {
         return (
           '<button class="opcion ' + (sel ? 'seleccionada' : '') + (it.agotado ? ' agotada' : '') + '" data-st="multi" data-item="' + it.id + '"' + (it.agotado ? ' disabled' : '') + '>' +
             '<span class="check">' + (sel ? '☑' : '☐') + '</span>' +
+            (it.color ? '<span class="opc-dot" data-cp="' + it.color + '"></span>' : '') +
             '<span class="opcion-nombre">' + it.nombre + (it.agotado ? ' <em class="opc-agotado-txt">agotado</em>' : '') + '</span>' +
             '<span class="opcion-precio">' + precioTxt + '</span>' +
           '</button>'
@@ -6325,6 +7250,7 @@ function renderPaso(paso) {
             return (
               '<button class="opcion ' + (sel ? 'seleccionada' : '') + (so.agotado ? ' agotada' : '') + '" data-st="multi-sub" data-item="' + it.id + '" data-sub="' + so.id + '"' + (so.agotado ? ' disabled' : '') + '>' +
                 '<span class="check">' + (sel ? '☑' : '☐') + '</span>' +
+                (so.color ? '<span class="opc-dot" data-cp="' + so.color + '"></span>' : '') +
                 '<span class="opcion-nombre">' + so.nombre + (so.agotado ? ' <em class="opc-agotado-txt">agotado</em>' : '') + '</span>' +
                 '<span class="opcion-precio">' + (so.precio > 0 ? '+ ' + fmt(so.precio) : 'incluida') + '</span>' +
               '</button>'
@@ -6443,10 +7369,16 @@ function sonidoCocinaActivo() {
 
 function aplicarTema() {
   var tema = (config && config.config && config.config.tema) || {};
-  var defs = { principal: '#e2541f', bg: '#16100d', superficie: '#221813', texto: '#f3ead9', destacado: '#ff7a3d' };
-  Object.keys(defs).forEach(function (k) {
-    var v = tema[k] || defs[k];
-    document.documentElement.style.setProperty('--' + (k === 'destacado' ? 'principal2' : k), v);
+  TEMA_CAMPOS.forEach(function (c) {
+    document.documentElement.style.setProperty(c.cssVar, tema[c.clave] || c.def);
+  });
+}
+/* Aplica en directo los valores que hay ahora mismo en los inputs de la página
+   de Configuración (previsualización sin guardar). */
+function aplicarTemaDesdeInputs() {
+  TEMA_CAMPOS.forEach(function (c) {
+    var el = document.getElementById(temaId(c.clave));
+    document.documentElement.style.setProperty(c.cssVar, (el && el.value.trim()) || c.def);
   });
 }
 function propinasActivas() {
@@ -6714,20 +7646,22 @@ function resumenItemHtml(it, idx) {
   const d = construirDetalle(it.producto, it.pasos, it.seleccion);
   const sub = red(d.subtotal * it.qty);
   const tamanoSel = it.seleccion.__tamano ? it.producto.tamanos.find((t) => t.id === it.seleccion.__tamano) : null;
-  const notas = (d.notas.length ? d.notas : (it._notas || [])).slice(0, 6).join(' · ');
+  const notasArr = (d.notas.length ? d.notas : (it._notas || [])).slice(0, 6);
+  const notasHtml = notasArr.map((n) => '<span class="nota-chip">' + esc(n) + '</span>').join('');
   const modsHtml = (d.mods.length ? d.mods : (it._mods || []))
-    .map((m) => '<div class="mod"><span>' + m.n + '</span><span>+ ' + fmt(m.p) + '</span></div>')
+    .map((m) => '<div class="mod"><span class="mod-n">' + m.n + '</span><span class="mod-p">+ ' + fmt(m.p) + '</span></div>')
     .join('');
   const porUnidad = it.qty > 1 ? '<small>' + fmt(d.subtotal) + ' /ud</small>' : '';
   const editable = it.pasos && it.pasos.length;
   return (
     '<div class="item" data-uid="' + it.uid + '">' +
       '<div class="item-cabecera">' +
+        (it.qty > 1 ? '<span class="item-qty">' + it.qty + '×</span>' : '') +
         '<span class="item-nombre">' + it.producto.nombre + (tamanoSel ? ' <small>· ' + tamanoSel.nombre + '</small>' : '') + '</span>' +
         (editable ? '<button class="icon-btn editar" data-accion="editar" aria-label="Editar">✎</button>' : '') +
         '<button class="icon-btn quitar" data-accion="quitar" aria-label="Quitar">✕</button>' +
       '</div>' +
-      (notas ? '<div class="notas">' + notas + '</div>' : '') +
+      (notasHtml ? '<div class="notas">' + notasHtml + '</div>' : '') +
       (modsHtml ? '<div class="mods">' + modsHtml + '</div>' : '') +
       '<div class="item-pie">' +
         '<div class="stepper">' +
@@ -6817,6 +7751,10 @@ function esc(s) {
 }
 
 async function abrirAdmin() {
+  $('#admin').classList.remove('oculto');
+  $('#admin').setAttribute('aria-hidden', 'false');
+  $('#admin-fondo').classList.remove('oculto');
+  $('#admin-cuerpo').innerHTML = '<div class="admin-cargando">⌛ Cargando configuración…</div>';
   try {
     const estado = await pedirEstado();
     if (estado && estado.pin) {
@@ -6825,13 +7763,10 @@ async function abrirAdmin() {
         'Código de administración',
         'Solo el dueño puede cambiar precios y productos. Introduce el código del local.'
       );
-      if (d === null) return;
+      if (d === null) { cerrarAdmin(); return; }
     }
   } catch (e) { /* sin servidor: se deja entrar en modo local */ }
   renderAdmin();
-  $('#admin').classList.remove('oculto');
-  $('#admin').setAttribute('aria-hidden', 'false');
-  $('#admin-fondo').classList.remove('oculto');
 }
 
 function cerrarAdmin() {
@@ -6963,11 +7898,9 @@ function renderAdmin() {
         '<h4 class="admin-funciones-tit">Apariencia</h4>' +
         '<p class="admin-ayuda" style="margin-bottom:8px">Personaliza los colores de la aplicación. El tema por defecto es el original.</p>' +
         '<div class="admin-tema-pickers">' +
-          adminTemaPickerHtml('Principal', 'admin-tema-principal', config.config.tema && config.config.tema.principal, '#e2541f') +
-          adminTemaPickerHtml('Destacado', 'admin-tema-destacado', config.config.tema && config.config.tema.destacado, '#ff7a3d') +
-          adminTemaPickerHtml('Fondo', 'admin-tema-bg', config.config.tema && config.config.tema.bg, '#16100d') +
-          adminTemaPickerHtml('Superficie', 'admin-tema-superficie', config.config.tema && config.config.tema.superficie, '#221813') +
-          adminTemaPickerHtml('Texto', 'admin-tema-texto', config.config.tema && config.config.tema.texto, '#f3ead9') +
+          TEMA_CAMPOS.map(function (c) {
+            return adminTemaPickerHtml(c.etiqueta, temaId(c.clave), config.config.tema && config.config.tema[c.clave], c.def);
+          }).join('') +
         '</div>' +
         '</div>' +
         '<button type="button" class="btn btn-secundario" id="admin-tema-reset" style="margin-top:6px">Restablecer tema original</button>' +
@@ -7001,11 +7934,7 @@ function renderAdmin() {
       var preview = document.getElementById(baseId + '-preview');
       if (hexInp) hexInp.value = ci.value;
       if (preview) preview.style.background = ci.value;
-      document.documentElement.style.setProperty('--principal', val('#admin-tema-principal'));
-      document.documentElement.style.setProperty('--principal2', val('#admin-tema-destacado'));
-      document.documentElement.style.setProperty('--bg', val('#admin-tema-bg'));
-      document.documentElement.style.setProperty('--superficie', val('#admin-tema-superficie'));
-      document.documentElement.style.setProperty('--texto', val('#admin-tema-texto'));
+      aplicarTemaDesdeInputs();
     });
   });
   document.querySelectorAll('.tema-hex').forEach(function (inp) {
@@ -7016,11 +7945,7 @@ function renderAdmin() {
       if (/^#[0-9a-fA-F]{6}$/.test(v)) {
         if (preview) preview.style.background = v;
         if (colorInp) colorInp.value = v;
-        document.documentElement.style.setProperty('--principal', val('#admin-tema-principal'));
-        document.documentElement.style.setProperty('--principal2', val('#admin-tema-destacado'));
-        document.documentElement.style.setProperty('--bg', val('#admin-tema-bg'));
-        document.documentElement.style.setProperty('--superficie', val('#admin-tema-superficie'));
-        document.documentElement.style.setProperty('--texto', val('#admin-tema-texto'));
+        aplicarTemaDesdeInputs();
       }
     });
   });
@@ -7041,20 +7966,15 @@ function renderAdmin() {
   });
   var resetBtn = $('#admin-tema-reset');
   if (resetBtn) resetBtn.addEventListener('click', function () {
-    var defs = { 'admin-tema-principal': '#e2541f', 'admin-tema-destacado': '#ff7a3d', 'admin-tema-bg': '#16100d', 'admin-tema-superficie': '#221813', 'admin-tema-texto': '#f3ead9' };
-    Object.keys(defs).forEach(function (k) {
-      var inp = document.getElementById(k);
-      if (inp) inp.value = defs[k];
-      var ci = document.getElementById(k + '-color');
-      if (ci) ci.value = defs[k];
-      var pr = document.getElementById(k + '-preview');
-      if (pr) pr.style.background = defs[k];
+    TEMA_CAMPOS.forEach(function (c) {
+      var inp = document.getElementById(temaId(c.clave));
+      if (inp) inp.value = c.def;
+      var ci = document.getElementById(temaId(c.clave) + '-color');
+      if (ci) ci.value = c.def;
+      var pr = document.getElementById(temaId(c.clave) + '-preview');
+      if (pr) pr.style.background = c.def;
+      document.documentElement.style.setProperty(c.cssVar, c.def);
     });
-    document.documentElement.style.setProperty('--principal', '#e2541f');
-    document.documentElement.style.setProperty('--principal2', '#ff7a3d');
-    document.documentElement.style.setProperty('--bg', '#16100d');
-    document.documentElement.style.setProperty('--superficie', '#221813');
-    document.documentElement.style.setProperty('--texto', '#f3ead9');
   });
   document.querySelectorAll('input[name="admin-env-dir"]').forEach((r) => {
     r.addEventListener('change', () => {
@@ -7087,6 +8007,7 @@ function renderAdmin() {
   });
   sincronizarBotonesAgotado();
   estadoAdmin('');
+  pintarSwatches();
 }
 
 /* Lista de personas de una página protegida: cada persona sale con un check
@@ -7422,6 +8343,7 @@ function bindAdminEventos() {
       const div = document.createElement('div');
       div.innerHTML = adminPasoHtml(nuevoPaso('seleccion', 'Nueva página'));
       btn.insertAdjacentElement('beforebegin', div.firstElementChild);
+      pintarSwatches(div.firstElementChild);
       actualizarContadorPasos(btn.closest('.admin-pasos-cuerpo'));
       return;
     }
@@ -7449,6 +8371,7 @@ function bindAdminEventos() {
         'add-multi': '<div class="admin-multi"><div class="admin-op-fila"><input class="inp inp-nombre" data-campo="multi-nombre" value="Extra" placeholder="Extra"><input class="inp inp-precio" data-campo="multi-precio" value="0" inputmode="decimal" aria-label="Precio">' + colorPickerHtml('multi-color', '') + '<button class="icon-btn admin-del" data-accion="del-multi" aria-label="Quitar extra">✕</button></div><div class="admin-op-fila-sec"><label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="multi-agotado"><span>🙅</span></label><button class="icon-btn admin-sub-toggle" data-accion="toggle-sub" aria-label="Salsas">🍅</button></div><div class="admin-sub"><div class="admin-sub-titulo">Salsas (sub-opciones)</div><button class="btn btn-secundario btn-mini" data-accion="add-sub">+ Salsa</button></div></div>'
       }[accion];
       btn.insertAdjacentElement('beforebegin', div.firstElementChild);
+      pintarSwatches(btn.parentNode);
       return;
     }
     if (accion === 'toggle-sub') {
@@ -7466,6 +8389,7 @@ function bindAdminEventos() {
       const div = document.createElement('div');
       div.innerHTML = '<div class="admin-sub-fila"><input class="inp inp-nombre" data-campo="sub-nombre" value="Salsa" placeholder="Salsa"><input class="inp inp-precio" data-campo="sub-precio" value="0" inputmode="decimal" aria-label="Precio">' + colorPickerHtml('sub-color', '') + '<label class="opc-agotado" title="Marcar como agotado"><input type="checkbox" data-campo="sub-agotado"><span>🙅</span></label><button class="icon-btn admin-del" data-accion="del-sub" aria-label="Quitar salsa">✕</button></div>';
       btn.insertAdjacentElement('beforebegin', div.firstElementChild);
+      pintarSwatches(sub);
       return;
     }
     if (accion === 'del-sub') {
@@ -7668,13 +8592,13 @@ function leerAdmin() {
         });
         return orden;
       })(),
-      tema: {
-        principal: val('#admin-tema-principal') || '#e2541f',
-        bg: val('#admin-tema-bg') || '#16100d',
-        superficie: val('#admin-tema-superficie') || '#221813',
-        texto: val('#admin-tema-texto') || '#f3ead9',
-        destacado: val('#admin-tema-destacado') || '#ff7a3d'
-      }
+      tema: (function () {
+        var t = {};
+        TEMA_CAMPOS.forEach(function (c) {
+          t[c.clave] = val('#' + temaId(c.clave)) || c.def;
+        });
+        return t;
+      })()
     },
     categorias: []
   };
@@ -7873,6 +8797,9 @@ let statsDias = [];
 let statsIndice = 0;
 let statsCierres = []; /* cierres de caja por fecha (servidor o local) */
 let statsComandasVista = []; /* comandas visibles en la estadística actual, para las acciones de ticket */
+let statsDiasEstado = {};   /* fecha -> 1 abierto | 0 cerrado (toque individual del usuario) */
+let statsDiasTodoAll = null;/* null | true (todo abierto) | false (todo cerrado) en modo rango */
+let statsRangoUltimaClave = ''; /* clave del último rango renderizado (desde|hasta) */
 
 function cargarCierresLocal() {
   return leerLocalStorageJSON('komandi_cierres', []);
@@ -7995,6 +8922,13 @@ function cerrarPanelStats() {
   $('#stats-fondo').classList.add('oculto');
 }
 
+function abrirCalendarioNativo(inp) {
+  if (typeof inp.showPicker === 'function') {
+    try { inp.showPicker(); return; } catch (err) { /* cae al fallback */ }
+  }
+  try { inp.focus(); inp.click(); } catch (err) { /* noop */ }
+}
+
 function fechaHaceDias(n) {
   const d = new Date(Date.now() - n * 86400000);
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -8064,10 +8998,17 @@ function renderStatsMetodoFiltro() {
 
 function renderStatsNav() {
   const esRango = statsModo === 'rango';
-  ['#stats-prev', '#stats-next', '#stats-hoy', '#stats-fecha-jump'].forEach((s) => $(s).classList.toggle('oculto', esRango));
+  /* El nav se queda visible en los dos modos: en rango muestra el intervalo
+     («Del … al …») en la misma píldora; solo se ocultan los botones de día. */
+  ['#stats-prev', '#stats-next', '#stats-hoy'].forEach((s) => $(s).classList.toggle('oculto', esRango));
   $('#stats-rango').classList.toggle('oculto', !esRango);
   $('#stats-rango-toggle').classList.toggle('activo', esRango);
   $('#stats-rango-toggle').innerHTML = '📅 ' + (esRango ? 'Día' : 'Rango') + ' <span class="chev" aria-hidden="true">' + (esRango ? '▴' : '▾') + '</span>';
+  const fechaBtn = $('#stats-fecha-btn');
+  if (fechaBtn) {
+    fechaBtn.classList.toggle('no-cal', esRango);
+    fechaBtn.title = esRango ? '' : 'Elegir fecha';
+  }
 }
 
 /* Los acordeones de estadísticas (filtros y resumen) arrancan replegados en
@@ -8084,6 +9025,12 @@ function inicializarPlegablesStats() {
   };
   aplicar($('#stats-filtros-caja'), $('#stats-filtros-toggle'), $('#stats-filtros-cuerpo'));
   aplicar($('#stats-resumen-caja'), $('#stats-resumen-toggle'), $('#stats-resumen'));
+  const barBtn = $('#stats-bar-toggle');
+  if (barBtn) {
+    const abierto = !movil;
+    barBtn.classList.toggle('abierto', abierto);
+    barBtn.setAttribute('aria-expanded', String(abierto));
+  }
 }
 
 function verRangoStats() {
@@ -8336,9 +9283,9 @@ async function manejarWhatsAppTicket(comanda, cliente) {
   let telefono = cliente && cliente.telefono ? String(cliente.telefono) : '';
   if (!telefono) {
     const pedido = await pedirTexto({
-      titulo: 'Enviar por WhatsApp',
+      titulo: 'Abrir ticket por WhatsApp',
       icono: '🟢',
-      aviso: 'Este cliente no tiene teléfono guardado. Escríbelo con prefijo para abrir WhatsApp con el ticket.',
+      aviso: 'Este cliente no tiene teléfono guardado. Escríbelo con el prefijo (ej. +34) y se abrirá WhatsApp con su ticket.',
       placeholder: '+34 600 00 00 00',
       boton: 'Abrir WhatsApp'
     });
@@ -8360,13 +9307,13 @@ async function manejarEmailTicket(comanda, cliente) {
   let destino = (cliente && cliente.email) ? String(cliente.email) : '';
   if (!destino) {
     const pedido = await pedirTexto({
-      titulo: porSmtp ? 'Enviar ticket por email' : 'Abrir el email del ticket',
+      titulo: porSmtp ? 'Enviar ticket por Email' : 'Abrir ticket por Email',
       icono: '✉️',
       aviso: porSmtp
         ? 'Este cliente no tiene email guardado. Escríbelo para enviarle el ticket desde la cuenta del local.'
-        : 'Este cliente no tiene email guardado. Escríbelo para abrir el correo con el ticket.',
+        : 'Este cliente no tiene email guardado. Escríbelo para abrir el correo con su ticket.',
       placeholder: 'cliente@correo.es',
-      boton: porSmtp ? 'Enviar email' : 'Abrir email'
+      boton: porSmtp ? 'Enviar Email' : 'Abrir Email'
     });
     if (pedido === null) return;
     destino = pedido;
@@ -8379,7 +9326,7 @@ async function manejarEmailTicket(comanda, cliente) {
     const desde = cfgEmail.desde || cfgEmail.usuario || 'la cuenta configurada';
     const d = await accederConPinVerificacion(
       '/api/enviar-email',
-      'Enviar ticket por email',
+      'Enviar ticket por Email',
       'Se enviará a ' + esc(destino) + ' desde ' + esc(desde),
       'enviar-email',
       { to: destino, asunto: asunto, html: html }
@@ -8541,6 +9488,55 @@ function renderStatsProductos(comsVista) {
     : '<div class="vacio">Sin productos.</div>';
 }
 
+function statsSubHtml(segs) {
+  return (segs || []).map((s) => '<span class="cs' + (s.cls ? ' ' + s.cls : '') + '">' + esc(s.txt) + '</span>').join('');
+}
+function actualizarStatsSub(html) {
+  const el = document.getElementById('stats-sub');
+  if (el) el.innerHTML = html || '';
+}
+
+/* Cabecera de cada sección del historial (Productos vendidos / Comandas),
+   con contador opcional y acciones a la derecha (expandir/contraer todo). */
+function statsSeccionCab(titulo, cont, accionesHtml) {
+  return '<div class="stats-seccion-cab">' +
+    '<h3>' + esc(titulo) + '</h3>' +
+    (cont != null && cont !== '' ? '<span class="stats-seccion-cont">' + esc(String(cont)) + '</span>' : '') +
+    (accionesHtml ? '<div class="stats-seccion-acciones">' + accionesHtml + '</div>' : '') +
+  '</div>';
+}
+
+/* En modo rango cada día se puede plegar/desplegar para navegar 100-200
+   comandas al día. Estado: toque individual, «todo abierto/cerrado», búsqueda
+   (que abre todos los días con coincidencias) y por defecto solo el más reciente. */
+function diaRangoAbierto(fecha, i, nDias) {
+  if ((statsBusqueda || '').trim()) return true;
+  if (statsDiasTodoAll != null) return !!statsDiasTodoAll;
+  if (statsDiasEstado[fecha] != null) return !!statsDiasEstado[fecha];
+  return nDias === 1 ? true : (i === 0);
+}
+
+function alternarDiaStats(btn) {
+  const fecha = btn.dataset.statsDia;
+  const grupo = btn.closest('.stats-dia-grupo');
+  if (!grupo) return;
+  const estabaAbierto = !grupo.hasAttribute('data-cerrado');
+  grupo.toggleAttribute('data-cerrado', estabaAbierto);
+  btn.setAttribute('aria-expanded', String(!estabaAbierto));
+  statsDiasEstado[fecha] = estabaAbierto ? 0 : 1;
+  statsDiasTodoAll = null;
+}
+
+function alternarTodosDiasStats(abrir) {
+  statsDiasTodoAll = abrir;
+  statsDiasEstado = {};
+  document.querySelectorAll('.stats-dia-grupo').forEach((g) => {
+    g.toggleAttribute('data-cerrado', !abrir);
+    const t = g.querySelector('[data-stats-dia]');
+    if (t) t.setAttribute('aria-expanded', String(abrir));
+  });
+}
+
 function renderStatsRango() {
   const resumen = $('#stats-resumen');
   const cont = $('#stats-cuerpo');
@@ -8554,14 +9550,30 @@ function renderStatsRango() {
   if (!dias.length) {
     $('#stats-fecha-txt').textContent = 'Del ' + fechaCorta(desde) + ' al ' + fechaCorta(hasta);
     $('#stats-fecha-sub').textContent = 'Sin comandas';
+    const irVacio = $('#stats-fecha-ir');
+    if (irVacio) irVacio.value = hasta;
+    actualizarStatsSub(statsSubHtml([
+      { txt: 'Del ' + fechaCorta(desde) + ' al ' + fechaCorta(hasta) },
+      { txt: 'sin comandas', cls: 'cs-kpi' }
+    ]));
     resumen.innerHTML = '';
     cont.innerHTML = '<div class="vacio">No hay comandas en ese rango de fechas.</div>';
+    statsComandasVista = [];
     return;
   }
   const agg = agregarDias(dias);
   const comsVista = comandasFiltroBusqueda(comandasFiltroMetodo(agg.comandas));
+  /* Al cambiar de rango se reinicia el plegado por día (nuevo punto de partida). */
+  const claveRango = desde + '|' + hasta;
+  if (claveRango !== statsRangoUltimaClave) {
+    statsRangoUltimaClave = claveRango;
+    statsDiasEstado = {};
+    statsDiasTodoAll = null;
+  }
   $('#stats-fecha-txt').textContent = 'Del ' + fechaCorta(desde) + ' al ' + fechaCorta(hasta);
   $('#stats-fecha-sub').textContent = dias.length + (dias.length === 1 ? ' día' : ' días') + ' · ' + comsVista.length + ' comandas';
+  const irRango = $('#stats-fecha-ir');
+  if (irRango) irRango.value = hasta;
   const artVista = comsVista.reduce((s, c) => s + (c.items || []).reduce((a, i) => a + (i.qty || 0), 0), 0);
   const totalVista = red(comsVista.reduce((s, c) => s + (c.total || 0), 0));
   resumen.innerHTML =
@@ -8571,23 +9583,52 @@ function renderStatsRango() {
   const propinasVista = red(comsVista.reduce((s, c) => s + (Number(c.propina) || 0), 0));
   if (propinasVista > 0) resumen.innerHTML += '<div class="stats-tarjeta propinas"><span>💝 Propinas</span><strong>' + fmtCorto(propinasVista) + '</strong></div>';
   document.querySelectorAll('#stats-resumen .stats-tarjeta strong').forEach((el) => ajustarFuenteTotal(el, 16));
+  actualizarStatsSub(statsSubHtml([
+      { txt: 'Del ' + fechaCorta(desde) + ' al ' + fechaCorta(hasta) },
+      { txt: dias.length + (dias.length === 1 ? ' día' : ' días'), cls: 'cs-kpi' },
+      { txt: comsVista.length + (comsVista.length === 1 ? ' comanda' : ' comandas'), cls: 'cs-kpi' },
+      { txt: fmtCorto(totalVista), cls: 'cs-monto' }
+    ]));
+  const prodsLista = productosDeComandas(comsVista);
   const prods = renderStatsProductos(comsVista);
   const porDia = new Map();
   comsVista.forEach((c) => {
     if (!porDia.has(c.__fecha)) porDia.set(c.__fecha, []);
     porDia.get(c.__fecha).push(c);
   });
-  const coms = [...porDia.entries()]
-    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
-    .map(([fecha, lista]) =>
-      '<div class="stats-dia-grupo">' +
-        '<div class="stats-dia-titulo">' + fechaLegible(fecha) + '</div>' +
-        lista.map(statsComandaHtml).join('') +
-      '</div>'
-    ).join('') || '<div class="vacio">' + ((statsBusqueda || '').trim() ? 'Nada coincide con «' + esc(statsBusqueda.trim()) + '».' : 'Sin comandas en el periodo.') + '</div>';
+  const fechasOrd = [...porDia.keys()]
+    .sort((a, b) => (a < b ? 1 : -1));
+  const accionesRango =
+    '<button type="button" class="btn btn-mini btn-secundario" data-stats-dias="abrir">⬇ Expandir todo</button>' +
+    '<button type="button" class="btn btn-mini btn-secundario" data-stats-dias="cerrar">⬆ Contraer todo</button>';
+  const grupos = fechasOrd.map((fecha, i) => {
+    const lista = porDia.get(fecha);
+    const abierto = diaRangoAbierto(fecha, i, fechasOrd.length);
+    const totalDia = red(lista.reduce((s, c) => s + (c.total || 0), 0));
+    const artDia = lista.reduce((s, c) => s + (c.items || []).reduce((a, it) => a + (it.qty || 0), 0), 0);
+    const rel = etiquetaRelativa(fecha);
+    return '<div class="stats-dia-grupo"' + (abierto ? '' : ' data-cerrado="1"') + '>' +
+      '<button type="button" class="stats-dia-titulo" data-stats-dia="' + esc(fecha) + '" aria-expanded="' + abierto + '">' +
+        '<span class="chev" aria-hidden="true">▾</span>' +
+        '<span class="sdf-fecha">' + esc(fechaLegible(fecha)) +
+          (rel ? ' <span class="sdf-rel">(' + esc(rel) + ')</span>' : '') + '</span>' +
+        '<span class="sdf-num">' + lista.length + (lista.length === 1 ? ' comanda' : ' comandas') + ' · ' + artDia + ' art.</span>' +
+        '<span class="sdf-total">' + fmt(totalDia) + '</span>' +
+      '</button>' +
+      '<div class="stats-dia-cuerpo">' +
+        '<div class="stats-comandas-grid">' + lista.map(statsComandaHtml).join('') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('') || '<div class="vacio">' + ((statsBusqueda || '').trim() ? 'Nada coincide con «' + esc(statsBusqueda.trim()) + '».' : 'Sin comandas en el periodo.') + '</div>';
   cont.innerHTML =
-    '<div class="stats-seccion"><h3>Productos vendidos</h3>' + prods + '</div>' +
-    '<div class="stats-seccion"><h3>Comandas del periodo</h3>' + coms + '</div>';
+    '<div class="stats-seccion">' +
+      statsSeccionCab('Productos vendidos', prodsLista.length) +
+      '<div class="stats-prods-box">' + prods + '</div>' +
+    '</div>' +
+    '<div class="stats-seccion">' +
+      statsSeccionCab('Comandas del periodo', comsVista.length, accionesRango) +
+      (fechasOrd.length ? '<div class="stats-dias-box">' + grupos + '</div>' : grupos) +
+    '</div>';
   statsComandasVista = comsVista;
 }
 
@@ -8597,6 +9638,7 @@ function renderStats() {
   if (!statsDias.length) {
     $('#stats-fecha-txt').textContent = 'Sin datos';
     $('#stats-fecha-sub').textContent = '';
+    actualizarStatsSub(statsSubHtml([{ txt: 'Sin comandas guardadas', cls: 'cs-kpi' }]));
     resumen.innerHTML = '';
     cont.innerHTML = '<div class="vacio">Aún no hay comandas guardadas.<br>Cuando envíes comandas a cocina aparecerán aquí, agrupadas por día.</div>';
     const avisoEl = $('#stats-dia-aviso');
@@ -8631,6 +9673,11 @@ function renderStats() {
   const pendienteDia = red(comsVista.filter((c) => !c.cobrado).reduce((s, c) => s + (c.total || 0), 0));
   const cobradoDia = red(totalDiaVista - pendienteDia);
   const propinasDia = red(comsVista.reduce((s, c) => s + (Number(c.propina) || 0), 0));
+  actualizarStatsSub(statsSubHtml([
+      { txt: fechaNav(dia.fecha) },
+      { txt: fmtCorto(totalDiaVista), cls: 'cs-monto' },
+      { txt: comsVista.length + (comsVista.length === 1 ? ' comanda' : ' comandas'), cls: 'cs-kpi' }
+    ]));
   resumen.innerHTML =
     '<div class="stats-tarjeta total"><span>Total del día</span><strong>' + fmtCorto(totalDiaVista) + '</strong></div>' +
     (conCobros ? '<div class="stats-tarjeta"><span>Te deben</span><strong>' + fmtCorto(pendienteDia) + '</strong></div>' : '') +
@@ -8641,6 +9688,7 @@ function renderStats() {
   document.querySelectorAll('#stats-resumen .stats-tarjeta strong').forEach((el) => ajustarFuenteTotal(el, 16));
   ajustarFuenteTotal(document.querySelector('#stats-resumen .stats-tarjeta.total strong'));
   const prods = renderStatsProductos(comsVista);
+  const prodsLista = productosDeComandas(comsVista);
   let comsHtml = '<div class="vacio">' + ((statsBusqueda || '').trim() ? 'Nada coincide con «' + esc(statsBusqueda.trim()) + '».' : 'Sin comandas este día.') + '</div>';
   try {
     if (comsVista.length) {
@@ -8651,8 +9699,14 @@ function renderStats() {
     comsHtml = '<div class="vacio error">Error al cargar comandas</div>';
   }
   cont.innerHTML =
-    '<div class="stats-seccion"><h3>Productos vendidos</h3>' + prods + '</div>' +
-    '<div class="stats-seccion"><h3>Comandas del día</h3>' + comsHtml + '</div>';
+    '<div class="stats-seccion">' +
+      statsSeccionCab('Productos vendidos', prodsLista.length) +
+      '<div class="stats-prods-box">' + prods + '</div>' +
+    '</div>' +
+    '<div class="stats-seccion">' +
+      statsSeccionCab('Comandas del día', comsVista.length) +
+      '<div class="stats-comandas-grid">' + comsHtml + '</div>' +
+    '</div>';
 }
 
 /* ---------- Cierre del día (caja) ---------- */
@@ -9013,7 +10067,14 @@ function bindEventosGlobales() {
   });
 
   $('#btn-usuario').addEventListener('click', abrirModalUsuario);
-  $('#usuario-cerrar').addEventListener('click', cerrarModalUsuario);
+  $('#usuario-cerrar').addEventListener('click', () => {
+    if (!getUsuario()) {
+      toast('Primero escribe tu nombre');
+      $('#usuario-nombre').focus();
+      return;
+    }
+    cerrarModalUsuario();
+  });
   $('#usuario-guardar').addEventListener('click', guardarModalUsuario);
   $('#usuario-nombre').addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarModalUsuario(); });
 
@@ -9047,6 +10108,10 @@ function bindEventosGlobales() {
   $('#cierre-cerrar').addEventListener('click', cerrarCierreDia);
   $('#cierre-fondo').addEventListener('click', cerrarCierreDia);
   $('#stats').addEventListener('click', (e) => {
+    const diaToggle = e.target.closest('[data-stats-dia]');
+    if (diaToggle) { alternarDiaStats(diaToggle); return; }
+    const diasTodo = e.target.closest('[data-stats-dias]');
+    if (diasTodo) { alternarTodosDiasStats(diasTodo.dataset.statsDias === 'abrir'); return; }
     const tk = e.target.closest('[data-ticket-accion]');
     if (tk) { manejarTicketAccion(tk); return; }
     const copia = e.target.closest('[data-comanda-copiar]');
@@ -9100,12 +10165,22 @@ function bindEventosGlobales() {
       toast('No hay comandas ese día');
     }
   });
+  const fechaNavBtn = $('#stats-fecha-ir');
+  if (fechaNavBtn && fechaNavBtn.parentElement) {
+    /* Clic en la fecha del nav: abre el calendario nativo (showPicker) solo
+       en modo día; en rango la navegación no es interactiva. En táctil/iOS el
+       input invisible queda encima (pointer-events:auto) y abre el picker nativo. */
+    const punteroGrueso = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    fechaNavBtn.parentElement.addEventListener('click', () => {
+      if (statsModo === 'rango' || punteroGrueso) return;
+      abrirCalendarioNativo(fechaNavBtn);
+    });
+  }
   document.querySelectorAll('.stats-fecha-jump').forEach((lbl) => {
     lbl.addEventListener('click', (e) => {
       const inp = lbl.querySelector('input[type="date"]');
       if (!inp || e.target === inp) return;
-      if (typeof inp.showPicker === 'function') { try { inp.showPicker(); } catch (err) { inp.focus(); } }
-      else inp.focus();
+      abrirCalendarioNativo(inp);
     });
   });
   $('#stats-rango-toggle').addEventListener('click', () => {
@@ -9139,6 +10214,10 @@ function bindEventosGlobales() {
     const abierto = $('#stats-resumen').classList.toggle('oculto') === false;
     $('#stats-resumen-toggle').setAttribute('aria-expanded', String(abierto));
     $('#stats-resumen-toggle').classList.toggle('abierto', abierto);
+  });
+  $('#stats-bar-toggle').addEventListener('click', () => {
+    const abierto = $('#stats-bar-toggle').classList.toggle('abierto');
+    $('#stats-bar-toggle').setAttribute('aria-expanded', String(abierto));
   });
   const buscarInput = $('#stats-busqueda');
   if (buscarInput) {
