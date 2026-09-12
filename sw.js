@@ -5,7 +5,7 @@
    vieja. En línea siempre se sirve lo nuevo (network-first); la caché solo
    da soporte offline. */
 
-const VERSION = 'v11';
+const VERSION = 'v12';
 const CACHE = 'komandi-landing-' + VERSION;
 
 const CORE = [
@@ -25,7 +25,10 @@ const CORE = [
   './assets/capturas/03-resumen.webp',
   './assets/capturas/04-cocina.webp',
   './assets/capturas/05-admin.webp',
-  './assets/capturas/06-pin.webp'
+  './assets/capturas/06-pin.webp',
+  './assets/capturas/07-estadisticas.webp',
+  './assets/capturas/08-cobros.webp',
+  './assets/capturas/09-repartos.webp'
 ];
 
 const TIMEOUT_MS = 4000;
