@@ -499,21 +499,19 @@ img { max-width: 100%; display: block; }
   user-select: none;
 }
 
-.tabla-envoltura::after {
-  content: '← Desliza →';
+.tabla-desliza {
   display: none;
+  margin: 0;
+  padding: .45rem .6rem .3rem;
   text-align: center;
-  padding: .45rem .6rem .55rem;
   font-size: .78rem;
   color: var(--texto2);
 }
+.tabla-envoltura.con-scroll + .tabla-desliza { display: block; }
 
 @media (max-width: 760px) {
   .tabla-envoltura {
     box-shadow: inset -14px 0 14px -14px rgba(0, 0, 0, .4);
-  }
-  .tabla-envoltura::after {
-    display: block;
   }
 }
 

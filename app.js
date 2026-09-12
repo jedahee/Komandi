@@ -244,6 +244,20 @@
     });
   }
 
+  /* Aviso "Desliza": solo se muestra cuando la tabla realmente desborda y,
+   * al estar fuera del contenedor con scroll, queda siempre a la vista por
+   * mucho que se deslice la tabla. */
+  document.querySelectorAll('.tabla-envoltura').forEach(function (ec) {
+    var aviso = ec.nextElementSibling;
+    if (!aviso || !aviso.classList.contains('tabla-desliza')) return;
+    function comprobarDesliza() {
+      ec.classList.toggle('con-scroll', ec.scrollWidth > ec.clientWidth + 1);
+    }
+    comprobarDesliza();
+    window.addEventListener('resize', comprobarDesliza);
+    window.addEventListener('orientationchange', comprobarDesliza);
+  });
+
   /* FAQ: animación de apertura/cierre en ambos sentidos y en CADA ciclo.
    * No se usan transiciones CSS de max-height dentro de <details>: en los
    * navegadores modernos la animación nativa del elemento las corta a mitad
