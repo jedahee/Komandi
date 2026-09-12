@@ -201,7 +201,7 @@
 
   /* PWA: registro del service worker para instalación y offline */
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('sw.js').catch(function () {});
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {});
   }
 
   /* Comparativa: deslizar la tabla. El ratón arrastra con el cursor (para que
