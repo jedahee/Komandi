@@ -492,10 +492,16 @@ img { max-width: 100%; display: block; }
   background: var(--superficie);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.tabla-envoltura.deslizando {
+  cursor: grabbing;
+  user-select: none;
 }
 
 .tabla-envoltura::after {
-  content: '→ Desliza →';
+  content: '← Desliza →';
   display: none;
   text-align: center;
   padding: .45rem .6rem .55rem;
