@@ -204,42 +204,45 @@
     navigator.serviceWorker.register('sw.js').catch(function () {});
   }
 
-  /* Comparativa: deslizar con el dedo o con el ratón hace que la tabla siga
-   * al puntero, y no se quede en el principio. Con pantalla táctil el scroll
-   * vertical sigue siendo nativo (touch-action: pan-y). */
-  document.querySelectorAll('.tabla-envoltura').forEach(function (ec) {
-    var arrastrando = false;
-    var moved = false;
-    var inicioX = 0;
-    var inicioY = 0;
-    var inicioScroll = 0;
-    ec.addEventListener('pointerdown', function (e) {
-      if (e.target.closest('a, button, input')) return;
-      arrastrando = true;
-      moved = false;
-      inicioX = e.clientX;
-      inicioY = e.clientY;
-      inicioScroll = ec.scrollLeft;
-      ec.classList.add('deslizando');
+  /* Comparativa: deslizar la tabla. El ratón arrastra con el cursor (para que
+   * siga al puntero), y el dedo usa el scroll nativo del contenedor, que es
+   * fluido y con inercia. */
+  if (window.PointerEvent) {
+    document.querySelectorAll('.tabla-envoltura').forEach(function (ec) {
+      var arrastrando = false;
+      var moved = false;
+      var inicioX = 0;
+      var inicioY = 0;
+      var inicioScroll = 0;
+      ec.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse') return;          /* el táctil es nativo */
+        if (e.target.closest('a, button, input')) return;
+        arrastrando = true;
+        moved = false;
+        inicioX = e.clientX;
+        inicioY = e.clientY;
+        inicioScroll = ec.scrollLeft;
+        ec.classList.add('deslizando');
+      });
+      ec.addEventListener('pointermove', function (e) {
+        if (!arrastrando || e.pointerType !== 'mouse') return;
+        var dx = e.clientX - inicioX;
+        var dy = e.clientY - inicioY;
+        if (!moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        if (Math.abs(dx) < Math.abs(dy)) return;        /* gesto vertical: nativo */
+        moved = true;
+        ec.scrollLeft = inicioScroll - dx;
+      });
+      function soltarDesliz() {
+        arrastrando = false;
+        ec.classList.remove('deslizando');
+      }
+      ec.addEventListener('pointerup', soltarDesliz);
+      ec.addEventListener('pointercancel', soltarDesliz);
+      ec.addEventListener('pointerleave', soltarDesliz);
+      ec.addEventListener('dragstart', function (e) { e.preventDefault(); });
     });
-    ec.addEventListener('pointermove', function (e) {
-      if (!arrastrando) return;
-      var dx = e.clientX - inicioX;
-      var dy = e.clientY - inicioY;
-      if (!moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
-      if (Math.abs(dx) < Math.abs(dy)) return;            /* gesto vertical: nativo */
-      moved = true;
-      ec.scrollLeft = inicioScroll - dx;
-    });
-    function soltarDesliz() {
-      arrastrando = false;
-      ec.classList.remove('deslizando');
-    }
-    ec.addEventListener('pointerup', soltarDesliz);
-    ec.addEventListener('pointercancel', soltarDesliz);
-    ec.addEventListener('pointerleave', soltarDesliz);
-    ec.addEventListener('dragstart', function (e) { e.preventDefault(); });
-  });
+  }
 
   /* FAQ: animación de apertura/cierre en ambos sentidos y en CADA ciclo.
    * No se usan transiciones CSS de max-height dentro de <details>: en los

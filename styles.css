@@ -493,7 +493,6 @@ img { max-width: 100%; display: block; }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   cursor: grab;
-  touch-action: pan-y;
 }
 .tabla-envoltura.deslizando {
   cursor: grabbing;
