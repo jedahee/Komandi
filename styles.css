@@ -258,7 +258,7 @@ img { max-width: 100%; display: block; }
   aspect-ratio: 780 / 1688;
   object-fit: cover;
   border-radius: 24px;
-  clip-path: inset(19px 0 29px 0 round 24px);
+  clip-path: inset(14px 0 24px 0 round 24px);
 }
 .hero-tel figcaption {
   position: absolute;
