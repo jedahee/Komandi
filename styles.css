@@ -246,6 +246,7 @@ img { max-width: 100%; display: block; }
 }
 
 .hero-tel {
+  position: relative;
   width: 280px;
   overflow: hidden;
 }
@@ -258,14 +259,21 @@ img { max-width: 100%; display: block; }
   border-radius: 24px;
   clip-path: inset(13px 0 23px 0 round 24px);
 }
-.hero-tel-pie {
+.hero-tel figcaption {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  margin: 0;
+  padding: .15rem .3rem;
   text-align: center;
-  font-size: .85rem;
-  color: var(--texto2);
-  margin-top: .6rem;
-  max-width: 300px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: .68rem;
+  line-height: 1.25;
+  color: #d9c8b8;
+  background: rgba(13, 9, 7, .45);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ---------- Secciones ---------- */
