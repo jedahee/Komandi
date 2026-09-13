@@ -118,7 +118,7 @@ repositorio `jedahee/Komandi`:
 
 ## 📄 Licencia
 
-Uso protegido © 2026 Jesús Daza (jedahee). Todos los derechos reservados.
+Uso protegido © 2026 jedahee (Komandi). Todos los derechos reservados.
 
 Puedes **ver** el proyecto y **contribuir** (issues y pull requests). **No está
 permitido copiar, republicar, redistribuir, revender ni reutilizar el código o
