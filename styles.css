@@ -245,7 +245,24 @@ img { max-width: 100%; display: block; }
   padding: .55rem .3rem .15rem;
 }
 
-.hero-tel { width: 280px; }
+.hero-tel {
+  width: auto;
+  height: 100vh;
+  height: 100dvh;
+  aspect-ratio: 290 / 620;
+  display: flex;
+  flex-direction: column;
+}
+.hero-tel video {
+  flex: 1 1 auto;
+  min-height: 0;
+  aspect-ratio: auto;
+  width: 100%;
+  height: auto;
+}
+.hero-tel figcaption {
+  flex: 0 0 auto;
+}
 
 /* ---------- Secciones ---------- */
 .seccion {
@@ -732,7 +749,7 @@ details[open] summary::after { color: var(--principal2); }
 @media (min-width: 760px) {
   .grid3 { grid-template-columns: repeat(3, 1fr); }
   .hero { grid-template-columns: 1.15fr .85fr; }
-  .hero-tel { width: 320px; }
+  .hero-tel { width: 320px; height: auto; aspect-ratio: auto; }
   .pasos { gap: 3rem; }
   .paso { grid-template-columns: .8fr 1.2fr; text-align: left; justify-items: stretch; align-items: center; }
   .paso:nth-of-type(even) .tel { order: 2; }
