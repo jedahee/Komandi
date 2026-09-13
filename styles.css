@@ -245,7 +245,13 @@ img { max-width: 100%; display: block; }
   padding: .55rem .3rem .15rem;
 }
 
-.hero-tel { width: 280px; }
+.hero-tel {
+  width: 280px;
+  overflow: hidden;
+}
+.hero-tel video {
+  clip-path: inset(12% 0 6% 0 round 24px);
+}
 
 /* ---------- Secciones ---------- */
 .seccion {
