@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Komandi">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
 <title>Komandi · Demo</title>
 <style>
 :root {
@@ -4885,7 +4887,7 @@ document.addEventListener('DOMContentLoaded', iniciar);
 
 async function iniciar() {
   if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
-    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+    if (!EMBEDDED_DATA) { navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}); }
   }
   prepararEventosPin();
   prepararPullToRefresh();
@@ -4913,7 +4915,7 @@ async function iniciar() {
     if (b) b.addEventListener('click', () => location.reload());
     return;
   }
-  document.title = config.config.nombre + ' · Cuentas';
+  document.title = EMBEDDED_DATA ? 'Komandi · Demo' : config.config.nombre + ' · Cuentas';
   $('#app-nombre').textContent = config.config.nombre;
   if (config.config.subtitulo) $('#app-subtitulo').textContent = config.config.subtitulo;
   categorias = config.categorias;

@@ -61,6 +61,17 @@ js = js.replace(
   '$1\nif (typeof localStorage !== "undefined") { ["komandi_comandas","komandi_clientes","komandi_cobros","komandi_cierres","komandi_num"].forEach(function(k) { localStorage.removeItem(k); }); }'
 );
 
+/* En la demo no hay SW de tienda: no registra nada (evita 404 en /demo/sw.js)
+   y el título queda «Komandi · Demo» en vez del subtítulo de la app. */
+js = js.replace(
+  "navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});",
+  "if (!EMBEDDED_DATA) { navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}); }"
+);
+js = js.replaceAll(
+  "document.title = config.config.nombre + ' · Cuentas';",
+  "document.title = EMBEDDED_DATA ? 'Komandi · Demo' : config.config.nombre + ' · Cuentas';"
+);
+
 /* ======================================================================
    MOCK COMPLETO DE FETCH PARA LA DEMO (solo cuando EMBEDDED_DATA)
    Intercepta todas las llamadas /api/* y las resuelve con localStorage.
@@ -495,7 +506,7 @@ js = js.replace(
 
 const salida = html
   .replace(/<link rel="manifest"[^>]*>\n/g, '')
-  .replace(/<link rel="icon"[^>]*>\n/g, '')
+  .replace(/<link rel="icon"[^>]*>\n/g, '<link rel="icon" type="image/png" href="../assets/favicon.png">\n')
   .replace(/<link rel="apple-touch-icon"[^>]*>\n/g, '')
   .replace('<link rel="stylesheet" href="styles.css">', '<style>\n' + css + '\n</style>')
   .replace('<title>Komandi · Cuentas</title>', '<title>Komandi · Demo</title>')
