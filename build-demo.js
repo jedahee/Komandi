@@ -8,8 +8,10 @@
  * - Elimina los links de PWA/manifest/iconos y el título pasa a «Komandi · Demo».
  * - La demo NUNCA pide PIN: con EMBEDDED_DATA la app ignora el estado del
  *   servidor (no hay secret.json ni pareados.json en un archivo estático).
- * - Mock completo de fetch para /api/* que usa localStorage, de modo que
- *   COMANDAS, CLIENTES, COBROS y CIERRES persisten entre sesiones.
+ * - Mock completo de fetch para /api/* resuelto con localStorage, pero cada
+ *   carga de la demo empieza de cero: se limpian las claves de comandas,
+ *   clientes, cobros, cierres y numeración al arrancar (ver «limpiar solo
+ *   datos de comandas/cobros al cargar» más abajo).
  * - Es la app de verdad con un menú de ejemplo: se puede probar siempre que se
  *   quiera, en móvil, tablet o PC.
  *
