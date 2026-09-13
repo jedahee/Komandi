@@ -25,9 +25,20 @@ const ROOT = path.join(__dirname, '..', 'base');
 const DATOS_EJEMPLO = path.join(ROOT, '..', 'kebab-cantillana', 'kebab-ali', 'datos', 'productos.json');
 const SALIDA = path.join(__dirname, 'demo', 'index.html');
 
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(ROOT, 'styles.css'), 'utf8');
 let js = fs.readFileSync(path.join(ROOT, 'app.js'), 'utf8');
+
+/* Logo de la app (cabecera y pantalla de código): se incrusta como data URL
+   para que la demo siga siendo un archivo único y el logo no quede roto
+   (en /demo/ no hay logo.png). */
+const logoPng = fs.readFileSync(path.join(ROOT, 'logo.png'));
+const logoData = 'data:image/png;base64,' + logoPng.toString('base64');
+html = html.replaceAll('src="logo.png"', 'src="' + logoData + '"');
+/* En el JS el logo por defecto es la cadena logo.png (aplicarLogo, vista previa
+   y botón «Usar el de Komandi»): en la demo se sustituye por el mismo data URL
+   para que el archivo único siga siendo autocontenido. */
+js = js.replaceAll("'logo.png'", "'" + logoData + "'");
 const raw = JSON.parse(fs.readFileSync(DATOS_EJEMPLO, 'utf8'));
 
 /* Sanitizar datos sensibles para la demo pública */
