@@ -257,15 +257,15 @@ img { max-width: 100%; display: block; }
   aspect-ratio: 780 / 1688;
   object-fit: cover;
   border-radius: 24px;
-  clip-path: inset(13px 0 23px 0 round 24px);
+  clip-path: inset(19px 0 29px 0 round 24px);
 }
 .hero-tel figcaption {
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: 6px;
+  bottom: 10px;
   margin: 0;
-  padding: .15rem .3rem;
+  padding: .2rem .4rem;
   text-align: center;
   font-size: .68rem;
   line-height: 1.25;
