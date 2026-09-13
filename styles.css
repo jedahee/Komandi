@@ -246,11 +246,32 @@ img { max-width: 100%; display: block; }
 }
 
 .hero-tel {
+  position: relative;
   width: 280px;
+  height: 612px;
   overflow: hidden;
 }
 .hero-tel video {
-  clip-path: inset(12% 0 6% 0 round 24px);
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: calc(100% - 2px);
+  aspect-ratio: auto;
+  object-fit: cover;
+  border-radius: 24px;
+}
+.hero-tel figcaption {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  padding: .35rem .3rem .5rem;
+  font-size: .72rem;
+  text-align: center;
+  color: var(--texto2);
+  background: #0d0907;
+  border-radius: 0 0 24px 24px;
 }
 
 /* ---------- Secciones ---------- */
@@ -738,7 +759,7 @@ details[open] summary::after { color: var(--principal2); }
 @media (min-width: 760px) {
   .grid3 { grid-template-columns: repeat(3, 1fr); }
   .hero { grid-template-columns: 1.15fr .85fr; }
-  .hero-tel { width: 320px; }
+  .hero-tel { width: 320px; height: 700px; }
   .pasos { gap: 3rem; }
   .paso { grid-template-columns: .8fr 1.2fr; text-align: left; justify-items: stretch; align-items: center; }
   .paso:nth-of-type(even) .tel { order: 2; }
