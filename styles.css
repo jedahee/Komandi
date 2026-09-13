@@ -253,10 +253,10 @@ img { max-width: 100%; display: block; }
 }
 .hero-tel video {
   position: absolute;
-  top: -29px;
+  top: 6px;
   left: 10px;
   width: calc(100% - 20px);
-  height: calc(100% + 26px);
+  height: 100%;
   aspect-ratio: auto;
   object-fit: cover;
   border-radius: 24px;
