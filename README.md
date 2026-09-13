@@ -118,4 +118,12 @@ repositorio `jedahee/Komandi`:
 
 ## 📄 Licencia
 
-MIT. Libre para copiar, usar y contribuir.
+Uso protegido © 2026 Jesús Daza (jedahee). Todos los derechos reservados.
+
+Puedes **ver** el proyecto y **contribuir** (issues y pull requests). **No está
+permitido copiar, republicar, redistribuir, revender ni reutilizar el código o
+los recursos** (diseño, capturas, vídeo, marca, textos) fuera de Komandi. Para
+usarlo en tu negocio, el único canal es **contratar el servicio**:
+`komandiapp@gmail.com` · `@komandiapp`.
+
+Términos completos en [`LICENSE`](LICENSE).

@@ -1,21 +1,43 @@
-MIT License
+# Licencia de Uso de Komandi
 
-Copyright (c) 2026 Jesús Daza (jedahee)
+**© 2026 Jesús Daza (jedahee). Todos los derechos reservados.**
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Komandi —la landing, la app de comandas, el servicio, el código fuente y todos
+los recursos (capturas, vídeo, marca, textos, iconos)— se ofrece únicamente bajo
+las siguientes condiciones. Al leer, usar o contribuir a este repositorio
+aceptas estos términos.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+---
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## ✅ Lo que SÍ está permitido
+
+- **Ver**: consultar el repositorio, la landing y la demo pública de evaluación
+  (`https://jedahee.github.io/Komandi/`).
+- **Contribuir**: abrir issues, proponer mejoras o enviar *pull requests*.
+  Al contribuir aceptas que tu aportación queda sujeta a esta misma licencia.
+- **Enlazar y mencionar**: enlazar a la web o citar a Komandi como marca, siempre
+  que no se muestre ni copie el código.
+
+## 🚫 Lo que NO está permitido
+
+- **Copiar o republicar**: clonar, copiar, subir o difundir el código, la app o
+  la landing, en su totalidad o en parte, por cualquier medio o formato.
+- **Reutilizar el código**: modificar o extraer el código para usarlo en otro
+  producto, negocio o servicio, propio o de terceros.
+- **Distribuir y vender**: redistribuir, vender, alquilar, sublicenciar o
+  monetizar el producto, el código o cualquier derivado, directa o
+  indirectamente.
+- **Extraer recursos**: sacar capturas, vídeo, marca o textos para reutilizarlos
+  fuera del proyecto Komandi.
+
+## 💡 Para usar Komandi en tu negocio
+
+El uso legítimo es **contratar el servicio** por email o Instagram:
+`komandiapp@gmail.com` · `@komandiapp`. Hacerse una copia propia se considerará
+infracción de esta licencia.
+
+## ⚖️ Garantía
+
+El software se proporciona «tal cual», sin garantías de ningún tipo, expresas o
+implícitas. El autor no será responsable de reclamaciones, daños u otras
+responsabilidades derivadas del uso del software.
