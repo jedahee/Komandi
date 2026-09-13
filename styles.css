@@ -263,9 +263,9 @@ img { max-width: 100%; display: block; }
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: 10px;
+  bottom: 2px;
   margin: 0;
-  padding: .2rem .4rem;
+  padding: .12rem .3rem;
   text-align: center;
   font-size: .68rem;
   line-height: 1.25;
