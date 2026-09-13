@@ -256,7 +256,7 @@ img { max-width: 100%; display: block; }
   aspect-ratio: 780 / 1688;
   object-fit: cover;
   border-radius: 24px;
-  clip-path: inset(9px 0 19px 0 round 24px);
+  clip-path: inset(11px 0 21px 0 round 24px);
 }
 .hero-tel-pie {
   text-align: center;
