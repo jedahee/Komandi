@@ -13,7 +13,7 @@ Sin terminales. Sin comisiones por pedido. Sin permanencia. En marcha en 10 minu
 
 ## 📸 Así se ve
 
-Capturas de la app en uso real, con datos de un kebab de verdad. *(Se actualizan
+Capturas de la app en uso real, con datos de negocio de verdad. *(Se actualizan
 solas en este README si sustituyes las imágenes en `assets/capturas/` manteniendo
 el mismo nombre.)*
 

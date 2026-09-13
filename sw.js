@@ -28,7 +28,11 @@ const CORE = [
   './assets/capturas/06-pin.webp',
   './assets/capturas/07-estadisticas.webp',
   './assets/capturas/08-cobros.webp',
-  './assets/capturas/09-repartos.webp'
+  './assets/capturas/09-repartos.webp',
+  './assets/capturas/10-comensal.webp',
+  './assets/capturas/11-cierre-dia.webp',
+  './assets/video/komandi-demo.webm',
+  './assets/video/komandi-demo.mp4'
 ];
 
 const TIMEOUT_MS = 4000;
