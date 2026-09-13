@@ -5,7 +5,7 @@
    vieja. En línea siempre se sirve lo nuevo (network-first); la caché solo
    da soporte offline. */
 
-const VERSION = 'v20';
+const VERSION = 'v22';
 const CACHE = 'komandi-landing-' + VERSION;
 
 const CORE = [
