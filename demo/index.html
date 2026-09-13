@@ -5622,10 +5622,13 @@ function renderListaComandas(lista, origen) {
             if (ha !== hb) return ha < hb ? 1 : -1;
             return (b.num || 0) - (a.num || 0);
           }
-          /* FIFO estricto: primero en entrar, primero en cocinar. El nº de
-             comanda crece con la llegada, así que ordenar por él es ordenar
-             por orden de entrada, sea comer aquí o para llevar. El filtro de
-             tipo (Comer aquí / Para llevar) separa las colas cuando se quiere. */
+          /* FIFO real por hora de llegada: primero la comanda con la 🕐 más
+             temprana. La hora se ve siempre en la tarjeta (el nº a veces se
+             sustituye por el nombre del cliente, como «Carlos»). El nº solo
+             desempata comandas a la misma hora. */
+          const ha = a.hora || '';
+          const hb = b.hora || '';
+          if (ha !== hb) return ha < hb ? -1 : 1;
           return (a.num || 0) - (b.num || 0);
         })
         .filter((c, i) => s.estado !== 'hecha' || i < (cocinaHechasPagina + 1) * HECHAS_POR_PAGINA)
