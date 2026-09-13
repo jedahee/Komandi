@@ -5,7 +5,7 @@
    vieja. En línea siempre se sirve lo nuevo (network-first); la caché solo
    da soporte offline. */
 
-const VERSION = 'v14';
+const VERSION = 'v15';
 const CACHE = 'komandi-landing-' + VERSION;
 
 const CORE = [
@@ -31,7 +31,6 @@ const CORE = [
   './assets/capturas/09-repartos.webp',
   './assets/capturas/10-comensal.webp',
   './assets/capturas/11-cierre-dia.webp',
-  './assets/video/komandi-demo.webm',
   './assets/video/komandi-demo.mp4'
 ];
 
