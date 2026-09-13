@@ -2,12 +2,15 @@
 
 **La comanda de tu negocio, en el móvil que ya tienes.**
 
-App PWA de **comandas para comida para llevar**: el comandero toma el pedido en su
-móvil (pestaña **Carta**) y la **Cocina** ve el ticket en vivo al instante en otro
-dispositivo. Hecha para kebab, hamburgueserías, pizzerías, pollos, bocadillerías,
-tacos, food trucks… y cualquier local que pida en el mostrador y pase a cocina.
+Landing + PWA de **Komandi**, la app de comandas para comida para llevar: el
+comandero toma el pedido en su móvil (pestaña **Carta**) y la **Cocina** ve el
+ticket en vivo al instante en otro dispositivo. Hecha para kebab,
+hamburgueserías, pizzerías, pollos, bocadillerías, tacos, food trucks… y
+cualquier local que pida en el mostrador y pase a cocina.
 
 Sin terminales. Sin comisiones por pedido. Sin permanencia. En marcha en 10 minutos.
+
+🌐 **En producción:** <https://jedahee.github.io/Komandi-Landing/>
 
 ---
 
@@ -24,42 +27,60 @@ el mismo nombre.)*
 
 ---
 
-## ✨ Qué hace
+## 🚀 Demo gratuita
 
-### 📋 Carta y pedido
-- Carta por **categorías** con emoji/imagen, nombre, descripción y precio de cada producto.
-- Asistente de pedido paso a paso: **tamaños**, carnes, **ingredientes** (con stepper y
-  `precioExtra` por unidad) y **extras/salsas** con su precio.
-- **Total calculado al momento**: sumas de extras, notas ("Sin cebolla"), subtotal y total.
-- Barra inferior siempre visible con nº de artículos y total acumulado.
+La **demo gratuita** es la app de verdad con un menú de ejemplo, **sin PIN**, sin
+registro y sin caducidad:
 
-### 🧾 Resumen y comanda
-- Desglose por artículo: tamaño, notas, modificaciones con precio (`+0,40 €`), cantidades.
-- **Copiar comanda en texto plano** lista para WhatsApp o apuntar.
-- Campo **"Para quién"** (mesa 8, para llevar…): sale como badge en cocina y en el historial.
-- **Nº de ticket que se reinicia cada día**, como la comanda de papel.
+- En la web: botón **«Probar gratis»** → [`demo/index.html`](demo/index.html)
+- En local: `node build-demo.js` la regenera a partir de `../base/` y de los
+  datos de ejemplo (`../kebab-cantillana/kebab-ali/datos/productos.json`).
 
-### 👨‍🍳 Cocina en vivo
-- El ticket llega a cocina **al segundo** y se ve en varios dispositivos a la vez.
-- Estados: **pendiente → en marcha → hecha**, con quién tomó (`👤 cajero`) y quién
-  prepara (`👨‍🍳 cocinero`) cada comanda.
-- Resumen de cocina: nº de pendientes / en marcha / hechas.
-- Sin internet: la app pasa sola a **modo local** y las comandas se guardan en el dispositivo.
+> La demo nunca pide PIN y no debe indexarse: `robots.txt` excluye `/demo/` y el
+> build inyecta `noindex, nofollow`.
 
-### 🔒 Seguridad
-- **PIN de tienda** opcional: solo los móviles del local entran; un token por dispositivo.
-- Revocación al instante si se pierde o cambia un móvil.
-- Datos **respaldados y solo tuyos**.
+---
 
-### ⚙️ Gestión sin saber programar
-- **Edita productos, precios y tamaños desde el móvil** (panel ⚙️), sin herramientas externas.
-- Editor JSON completo para cambios avanzados.
-- La pestaña Cocina está protegida: no se puede borrar ni tocar por error.
+## 🧱 Estructura del repositorio
 
-### 📱 PWA: instalable y offline
-- Se añade a la pantalla de inicio como una app normal, **sin pasar por Play/App Store**.
-- Funciona **sin conexión** una vez cargada.
-- Android, iPhone, tablet o PC (Windows, macOS, Linux): cualquier navegador moderno.
+- `index.html` · `styles.css` · `app.js` — la landing (web estática, sin frameworks).
+- `sw.js` · `manifest.webmanifest` — PWA (network-first, soporte offline).
+- `assets/` — logo, iconos, capturas `webp`, vídeo de demostración y la imagen
+  Open Graph `og-1200x630.jpg`.
+- `demo/index.html` + `build-demo.js` — la demo de la app, en un solo archivo.
+- `robots.txt` · `sitemap.xml` · `.nojekyll` — SEO e indexación (ver abajo).
+
+El **código de la app** (no la landing) vive en el repo
+[`Kebab-Base`](https://github.com/jedahee/Kebab-Base): el servicio Node.js, la
+SPA de comandas/cocina, el despliegue multitienda y los scripts de tienda
+(`crear-tienda.sh`, `actualizar-tienda.sh`, `sync-datos.sh`, `pin.sh`).
+
+---
+
+## 🔍 SEO e indexación
+
+- **URL canónica** y todos los metadatos (OG / Twitter / JSON-LD) apuntan a
+  `https://jedahee.github.io/Komandi-Landing/`. El `hreflang` es `es` + `x-default`.
+- **JSON-LD** (`<script type="application/ld+json">`): `WebSite`, `Organization`
+  (con `sameAs` a Instagram y `contactPoint` de email), `SoftwareApplication`
+  (con `offers`, `screenshot` y `featureList`) y `Product` con los dos planes,
+  todo coherente con los textos visibles de la página (14,99 €/mes y 149,99 €/año).
+- **FAQPage** con las 13 preguntas que se ven en la sección FAQ (Google exige
+  que las respuestas estén en la página).
+- `robots.txt` permite `*`, bloquea `/demo/` y anuncia el sitemap.
+- `sitemap.xml` lista la home. `manifest.webmanifest` sirve la instalación PWA.
+- El **Service Worker no cachea `/demo/`** ni interfiere con su `noindex`.
+
+---
+
+## 📬 Contacto
+
+- Email: **komandiapp@gmail.com**
+- Instagram: **@komandiapp** (<https://www.instagram.com/komandiapp>)
+- Horario de soporte: **10:00 a 20:00**
+
+Los datos se configuran en una sola constante (`SITIO` en `app.js`) y se
+propagan a todos los enlaces, el pie, el sector de contacto y los `mailto:`.
 
 ---
 
@@ -81,63 +102,17 @@ contigo, gestión de dispositivos y soporte por email e Instagram de
 
 ---
 
-## 🚀 Pruébala ahora
+## 🚚 Despliegue (GitHub Pages)
 
-La **demo gratuita** es la app de verdad con un menú de ejemplo, **sin PIN**, sin
-registro y sin caducidad: [`demo/index.html`](demo/index.html).
+La web se publica en **GitHub Pages** desde la rama `main` (carpeta raíz) del
+repositorio `jedahee/Komandi-Landing`:
 
-*Se regenera con `node build-demo.js` a partir de `../base/` y los datos de ejemplo.*
-
-> ⚠️ **Temporal**: el enlace a la demo es provisional. Cuando la web esté desplegada
-> apuntará a su URL definitiva.
-
----
-
-## 💪 Ventajas de Komandi
-
-- **💰 Precio de verdad bajo**: menos que un pedido para llevar al mes. Tarifa
-  plana, sin letra pequeña.
-- **🚫 Sin comisión por pedido**: el margen se queda en tu negocio, no se va a una
-  app de delivery.
-- **📱 Sin TPV ni terminales**: usas los móviles y tablets que ya tienes. Nada que
-  comprar, nada que instalar (PWA).
-- **⚡ En marcha en 10 minutos**: abres la URL, pones el PIN y ya funciona.
-- **🍳 Comanda cajero → cocina en vivo**: la cocina ve el ticket al segundo, sin
-  gritos ni papeles que se pierden.
-- **✏️ Carta editable por el dueño**: productos, precios y tamaños desde el móvil,
-  sin saber programar.
-- **📶 Funciona sin internet**: modo local + PWA offline. Una caída de red no para
-  el negocio.
-- **🔒 Tus datos son tuyos**: respaldados, protegidos por PIN y solo los ves tú.
-- **🤝 Sin permanencia ni contrato**: y el primer mes es gratis.
-
----
-
-## 🧩 Para qué negocio vale
-
-Si tomas el pedido en el mostrador y la cocina necesita verlo, te vale:
-
-🥙 Kebab/Döner · 🍔 Hamburguesería · 🍕 Pizzería · 🍗 Pollo asado o frito · 🥪 Bocadillería ·
-🌮 Tacos · 🍟 Comida rápida · 🥞 Crêpes/gofres · 🥡 Takeaway · 🚚 Food truck
-
----
-
-## 🔧 Tecnología
-
-Web estática y ligera, sin frameworks: HTML/CSS/JS puro + PWA (manifest y service
-worker). Backend de la app: Node.js vanilla (un `server.js`, sin dependencias) y
-datos en JSON. Coste de infraestructura casi nulo.
-
----
-
-## 📬 Contacto
-
-Los datos de contacto (email, Instagram) y el horario de atención se
-publican en la **web**. De momento, el enlace es temporal y todavía no lleva a
-ningún sitio:
-
-**[🌐 Ver la web](https://jedahee.github.io/Komandi-Landing/)** — *enlace temporal, se
-actualizará con la URL definitiva cuando haya dominio propio.*
+1. Cualquier `git push` a `main` despliega la nueva versión en
+   `https://jedahee.github.io/Komandi-Landing/` (GitHub Pages la activa
+   automáticamente; no hace falta rama separada ni build).
+2. Los cambios de **código de la app** se despliegan a las tiendas con
+   `base/actualizar-tienda.sh` (nunca toca los `datos/` de las tiendas).
+3. Tras desplegar, si cambia la carta/demo: `node build-demo.js` y commit.
 
 ---
 
