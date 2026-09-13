@@ -248,6 +248,7 @@ img { max-width: 100%; display: block; }
 .hero-tel {
   position: relative;
   width: 280px;
+  padding: 10px 16px 26px;
   overflow: hidden;
 }
 .hero-tel video {
