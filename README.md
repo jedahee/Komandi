@@ -10,7 +10,7 @@ cualquier local que pida en el mostrador y pase a cocina.
 
 Sin terminales. Sin comisiones por pedido. Sin permanencia. En marcha en 10 minutos.
 
-🌐 **En producción:** <https://jedahee.github.io/Komandi-Landing/>
+🌐 **En producción:** <https://jedahee.github.io/Komandi/>
 
 ---
 
@@ -60,7 +60,7 @@ SPA de comandas/cocina, el despliegue multitienda y los scripts de tienda
 ## 🔍 SEO e indexación
 
 - **URL canónica** y todos los metadatos (OG / Twitter / JSON-LD) apuntan a
-  `https://jedahee.github.io/Komandi-Landing/`. El `hreflang` es `es` + `x-default`.
+  `https://jedahee.github.io/Komandi/`. El `hreflang` es `es` + `x-default`.
 - **JSON-LD** (`<script type="application/ld+json">`): `WebSite`, `Organization`
   (con `sameAs` a Instagram y `contactPoint` de email), `SoftwareApplication`
   (con `offers`, `screenshot` y `featureList`) y `Product` con los dos planes,
@@ -105,10 +105,10 @@ contigo, gestión de dispositivos y soporte por email e Instagram de
 ## 🚚 Despliegue (GitHub Pages)
 
 La web se publica en **GitHub Pages** desde la rama `main` (carpeta raíz) del
-repositorio `jedahee/Komandi-Landing`:
+repositorio `jedahee/Komandi`:
 
 1. Cualquier `git push` a `main` despliega la nueva versión en
-   `https://jedahee.github.io/Komandi-Landing/` (GitHub Pages la activa
+   `https://jedahee.github.io/Komandi/` (GitHub Pages la activa
    automáticamente; no hace falta rama separada ni build).
 2. Los cambios de **código de la app** se despliegan a las tiendas con
    `base/actualizar-tienda.sh` (nunca toca los `datos/` de las tiendas).

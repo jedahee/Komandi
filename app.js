@@ -13,7 +13,7 @@
       instagram: 'https://www.instagram.com/komandiapp'
     },
     horario: '10:00 a 20:00',    // ← horario de soporte y atención
-    url: 'https://jedahee.github.io/Komandi-Landing/', // ← URL final de la landing (para el QR del folleto)
+    url: 'https://jedahee.github.io/Komandi/', // ← URL final de la landing (para el QR del folleto)
     demo: 'demo/index.html',     // ← Generado por build-demo.js: app completa en un solo archivo, SIN PIN
     mensaje: 'Hola, he probado la demo de Komandi y quiero montarla en mi negocio.',
     planes: {

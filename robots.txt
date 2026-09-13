@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /demo/
 
-Sitemap: https://jedahee.github.io/Komandi-Landing/sitemap.xml
+Sitemap: https://jedahee.github.io/Komandi/sitemap.xml
