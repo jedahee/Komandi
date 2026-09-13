@@ -253,25 +253,22 @@ img { max-width: 100%; display: block; }
 }
 .hero-tel video {
   position: absolute;
-  top: 6px;
+  top: -29px;
   left: 10px;
   width: calc(100% - 20px);
-  height: calc(100% - 2px);
+  height: calc(100% + 26px);
   aspect-ratio: auto;
   object-fit: cover;
   border-radius: 24px;
 }
-.hero-tel figcaption {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 0;
-  padding: .35rem .3rem .5rem;
-  font-size: .72rem;
+.hero-tel-pie {
   text-align: center;
+  font-size: .85rem;
   color: var(--texto2);
-  background: #0d0907;
-  border-radius: 0 0 24px 24px;
+  margin-top: .6rem;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------- Secciones ---------- */
